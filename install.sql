@@ -1,0 +1,24 @@
+DROP TABLE IF EXISTS wcf1_user_guestbook_entry;
+CREATE TABLE wcf1_user_guestbook_entry (
+	entryID		INT(10) UNSIGNED	NOT NULL AUTO_INCREMENT,
+	ownerID		INT(10) UNSIGNED	NOT NULL DEFAULT 0,
+	userID		INT(10) UNSIGNED	NOT NULL DEFAULT 0,
+	username	VARCHAR(255)		NOT NULL DEFAULT '',
+	message		MEDIUMTEXT,
+	time		INT(10)			NOT NULL DEFAULT 0,
+	ipAddress	VARCHAR(15)		NOT NULL DEFAULT '',
+	enableSmilies	TINYINT(1)  		NOT NULL DEFAULT 1,
+	enableHtml 	TINYINT(1)  		NOT NULL DEFAULT 0,
+	enableBBCodes	TINYINT(1)  		NOT NULL DEFAULT 1,
+	isDeleted	TINYINT(1)		NOT NULL DEFAULT 0,
+	deletedByID	INT(10) UNSIGNED	NOT NULL DEFAULT 0,
+	deletedBy	VARCHAR(255)		NOT NULL DEFAULT '',
+	deleteTime	INT(10)			NOT NULL DEFAULT 0,
+	deleteReason	TEXT
+	PRIMARY KEY (entryID),
+	FULLTEXT KEY (message),
+	KEY (ownerID),
+	KEY (userID),
+	KEY (isDeleted),
+	KEY (ipAddress)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
