@@ -28,7 +28,8 @@ class UserGuestbookUtil {
 		$permissions = array();
 		
 		$permissions['isOwner'] = (WCF::getUser()->userID === $guestbookOwner->userID);
-		$permissions['canViewGuestbook'] = (WCF::getUser()->getPermission('user.guestbook.canViewGuestbook') && (($guestbookOwner->guestbookAccess | UserGuestbookUtil::ACCESS_FRIENDS) ? UserProfile::isBuddy($guestbookOwner->userID) : ($guestbookOwner->guestbookAccess | UserGuestbookUtil::ACCESS_EVERYONE)));
+		$permissions['canUseGuestbook'] = (bool)WCF::getUser()->getPermission('user.guestbook.canUseGuestbook');
+		$permissions['canViewGuestbook'] = ($permissions['canUseGuestbook'] && (($guestbookOwner->guestbookAccess | UserGuestbookUtil::ACCESS_FRIENDS) ? UserProfile::isBuddy($guestbookOwner->userID) : ($guestbookOwner->guestbookAccess | UserGuestbookUtil::ACCESS_EVERYONE)));
 		$permissions['canWriteEntry'] =  (WCF::getUser()->getPermission('user.guestbook.canWriteEntry') && (($guestbookOwner->guestbookWriteEntryAccess | UserGuestbookUtil::ACCESS_FRIENDS) ? UserProfile::isBuddy($guestbookOwner->userID) : ($guestbookOwner->guestbookWriteEntryAccess | UserGuestbookUtil::ACCESS_EVERYONE)));
 		$permissions['canWriteComment'] = (WCF::getUser()->getPermission('user.guestbook.canWriteComment') && (($guestbookOwner->guestbookWriteCommentAccess | UserGuestbookUtil::ACCESS_FRIENDS) ? UserProfile::isBuddy($guestbookOwner->userID) : ($guestbookOwner->guestbookWriteCommentAccess | UserGuestbookUtil::ACCESS_EVERYONE)));
 		
