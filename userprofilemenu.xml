@@ -5,7 +5,7 @@
 			<!-- TODO: add action icon name -->
 			<icon>placeholderM.png</icon>
 			<link>index.php?page=UserGuestbook&amp;userID=%s</link>
-			<options>module_guestbook</options>
+			<options>module_user_guestbook</options>
 		</userprofilemenuitem>
 	</import>
 </data>
