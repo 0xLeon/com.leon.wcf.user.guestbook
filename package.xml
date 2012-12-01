@@ -29,16 +29,16 @@
 		<templates>templates.tpl</templates>
 		<sql>install.sql</sql>
 		
-		<groupoptions>groupoptions.xml</groupoptions>
+		<!--<groupoptions>groupoptions.xml</groupoptions>-->
 		<options>options.xml</options>
-		<useroptions>useroptions.xml</useroptions>
+		<!--<useroptions>useroptions.xml</useroptions>-->
 		<userprofilemenu>userprofilemenu.xml</userprofilemenu>
-		<eventlistener>eventlistener.xml</eventlistener>
-		<cronjobs>cronjobs.xml</cronjobs>
-		<pagelocation>pagelocation.xml</pagelocation>
+		<!--<eventlistener>eventlistener.xml</eventlistener>-->
+		<!--<cronjobs>cronjobs.xml</cronjobs>-->
+		<!--<pagelocation>pagelocation.xml</pagelocation>-->
 		
-		<languages languagecode="en">en.xml</languages>
-		<languages languagecode="de">de.xml</languages>
-		<languages languagecode="de-informal">de-informal.xml</languages>
+		<!--<languages languagecode="en">en.xml</languages>-->
+		<!--<languages languagecode="de">de.xml</languages>-->
+		<!--<languages languagecode="de-informal">de-informal.xml</languages>-->
 	</instructions>
 </package>
