@@ -73,6 +73,8 @@ class UserGuestbookPage extends MultipleLinkPage {
 		
 		$this->frame->assignVariables();
 		WCF::getTPL()->assign(array(
+			'userPermissions' => UserGuestbookUtil::getUserPermissions($this->frame->getUser()),
+			'modPermissions' => UserGuestbookUtil::getModeratorPermissions($this->frame->getUser()),
 			'entries' => $this->entryList->getObjects()
 		));
 	}
