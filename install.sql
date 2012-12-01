@@ -14,7 +14,7 @@ CREATE TABLE wcf1_user_guestbook_entry (
 	deletedByID	INT(10) UNSIGNED	NOT NULL DEFAULT 0,
 	deletedBy	VARCHAR(255)		NOT NULL DEFAULT '',
 	deleteTime	INT(10)			NOT NULL DEFAULT 0,
-	deleteReason	TEXT
+	deleteReason	TEXT,
 	PRIMARY KEY (entryID),
 	FULLTEXT KEY (message),
 	KEY (ownerID),
