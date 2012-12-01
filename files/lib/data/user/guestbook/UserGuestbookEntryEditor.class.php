@@ -37,38 +37,59 @@ class UserGuestbookEntryEditor extends UserGuestbookEntry {
 		return new UserGuestbookEntryEditor(WCF::getDB()->getInsertID());
 	}
 	
+	// TODO: implement UserGuestbookEditor::update()
 	public function update() {
 		
 	}
 	
+	/**
+	 * Marks this guestbook entry.
+	 */
 	public function mark() {
+		$markedEntries = self::getMarkedEntries();
 		
+		array_push($markedEntries, $this->entryID);
+		WCF::getSession()->register('markedGuestbookEntries', $markedEntries);
 	}
 	
+	/**
+	 * Unmarks this guestbook entry.
+	 */
 	public function unmark() {
-		
+		$markedEntries = self::getMarkedPosts();
+		if (in_array($this->entryID, $markedEntries)) {
+			$key = array_search($this->entryID, $markedEntries);
+			
+			unset($markedEntries[$key]);
+			
+			if (count($markedEntries) === 0) {
+				self::unmarkAll();
+			}
+			else {
+				WCF::getSession()->register('markedGuestbookEntries', $markedEntries);
+			}
+		}
 	}
 	
 	/**
 	 * Moves this guestbook entry in recycle bin.
 	 */
 	public function trash($deletedByID, $deletedBy, $reason = '') {
-		self::trashAll($this->postID, $deletedByID, $deletedBy, $reason);
+		self::trashAll($this->entryID, $deletedByID, $deletedBy, $reason);
 	}
 	
 	/**
 	 * Restores this guestbook entry.
 	 */
 	public function restore() {
-		self::restoreAll(array($this->postID));
+		self::restoreAll(array($this->entryID));
 	}
 	
+	/**
+	 * Deletes this guestbook entry completely.
+	 */
 	public function delete() {
-		
-	}
-	
-	public function deleteCompletely() {
-		
+		self::deleteAllCompletely(array($this->entryID));
 	}
 	
 	/**
@@ -80,9 +101,14 @@ class UserGuestbookEntryEditor extends UserGuestbookEntry {
 	
 	/**
 	 * Moves all guestbook entries with the given IDs in recycle bin.
+	 * 
+	 * @param	array		$entryIDs
+	 * @param	integer		$deletedByID
+	 * @param	string		$deletedBy
+	 * @param	string		$reason
 	 */
-	public static function trashAll($postIDs, $deletedByID, $deletedBy, $reason = '') {
-		if (!count($postIDs)) return;
+	public static function trashAll($entryIDs, $deletedByID, $deletedBy, $reason = '') {
+		if (!count($entryIDs)) return;
 		
 		$sql = "UPDATE	wcf".WCF_N."_user_guestbook_entry
 			SET	isDeleted = 1,
@@ -96,9 +122,11 @@ class UserGuestbookEntryEditor extends UserGuestbookEntry {
 	
 	/**
 	 * Restores all guestbook entries with the given IDs.
+	 * 
+	 * @param	array		$entryIDs
 	 */
-	public static function restoreAll($postIDs) {
-		if (!count($postIDs)) return;
+	public static function restoreAll($entryIDs) {
+		if (!count($entryIDs)) return;
 		
 		$sql = "UPDATE	wcf".WCF_N."_user_guestbook_entry
 			SET	isDeleted = 0,
@@ -106,16 +134,25 @@ class UserGuestbookEntryEditor extends UserGuestbookEntry {
 				deletedBy = '',
 				deleteTime = 0,
 				deleteReason = '',
-			WHERE	entryID IN (".implode(',', $postIDs).")";
+			WHERE	entryID IN (".implode(',', $entryIDs).")";
 		WCF::getDB()->sendQuery($sql);
 	}
 	
-	public static function deleteAll($postIDs) {
+	// TODO: Implement UserGuestbookEntryEditor::deleteAll()
+	public static function deleteAll($entryIDs) {
 		
 	}
 	
-	public static function deleteAllCompletely($postIDs) {
-		
+	/**
+	 * Deletes all guestbook entries with the given IDs.
+	 * 
+	 * @param	array		$entryIDs
+	 */
+	public static function deleteAllCompletely($entryIDs) {
+		$sql = "DELETE
+			FROM	wcf".WCF_N."_user_guestbook_entry
+			WHERE	entryID IN (".implode(',', $entryIDs).")";
+		WCF::getDB()->sendQuery($sql);
 	}
 	
 	/**
@@ -128,6 +165,6 @@ class UserGuestbookEntryEditor extends UserGuestbookEntry {
 			return $sessionVars['markedGuestbookEntries'];
 		}
 		
-		return null;
+		return array();
 	}
 }
