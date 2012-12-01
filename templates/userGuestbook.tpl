@@ -3,13 +3,13 @@
 	<title>{lang}wcf.user.profile.title{/lang} - {lang}wcf.user.profile.members{/lang} - {lang}{PAGE_TITLE}{/lang}</title>
 	{include file='headInclude' sandbox=false}
 	
-	{if $canWriteEntry}
+	{if $userPermissions.canWriteEntry}
 		{include file='multiQuote' formURL="index.php?form=UserGuestbookEntryAdd&ownerID=$user->userID"|concat:SID_ARG_2ND_NOT_ENCODED}
 	{else}
 		{include file='multiQuote'}
 	{/if}
 	
-	{if $permissions.canHandleEntry}
+	{if $modPermissions.canHandleEntry}
 		{include file='guestbookEntryInlineEdit' pageType='profile'}
 	{/if}
 	
@@ -36,16 +36,33 @@
 	
 	<div class="border {if $this|method_exists:'getUserProfileMenu' && $this->getUserProfileMenu()->getMenuItems('')|count > 1}tabMenuContent{else}content{/if}">
 		<div class="container-1">
-			<div class="contentHeader">
-				{pages print=true assign=pagesLinks link="index.php?page=UserGuestbook&userID=$user->userID&pageNo=%d"|concat:SID_ARG_2ND_NOT_ENCODED}
+			<div class="contentBox">
+				<h3 class="subheadline">{lang}wcf.user.guestbook{/lang}</h3>
 				
-				{* large buttons *}
+				<div class="contentHeader">
+					{pages print=true assign=pagesLinks link="index.php?page=UserGuestbook&userID=$user->userID&pageNo=%d"|concat:SID_ARG_2ND_NOT_ENCODED}
+					
+					{* large buttons *}
+				</div>
+				
+				{if $entries|count > 0}
+					{foreach from=$entries item=entry}
+						{* entry output *}
+					{/foreach}
+				
+					<div class="contentFooter">
+						{@$pagesLinks}
+						
+						{* large buttons *}
+					</div>
+				{else}
+					{if $userPermissions.isOwner}
+						{lang}wcf.user.guestbook.owner.noEntries{/lang}
+					{else}
+						{lang}wcf.user.guestbook.noEntries{/lang}
+					{/if}
+				{/if}
 			</div>
-			{if $entries|count > 0}
-				
-			{else}
-			
-			{/if}
 		</div>
 	</div>
 </div>
