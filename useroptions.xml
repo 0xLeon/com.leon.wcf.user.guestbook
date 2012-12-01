@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/useroptions.xsd">
+	<import>
+		<categories>
+			<category name="settings.communication.guestbook">
+				<parent>settings.communication</parent>
+				<options>module_user_guestbook</options>
+				<permissions>user.guestbook.canUseGuestbook</permissions>
+			</category>
+		</categories>
+		<options>
+			<option name="guestbookAccess">
+				<categoryname>settings.communication.guestbook</categoryname>
+				<optiontype>select</optiontype>
+				<selectoptions><![CDATA[
+					1:wcf.user.guestbook.options.access.noone
+					2:wcf.user.guestbook.options.access.friends
+					4:wcf.user.guestbook.options.access.everyone
+				]]></selectoptions>
+				<defaultvalue>4</defaultvalue>
+				<searchable>0</searchable>
+				<visible>4</visible>
+				<editable>1</editable>
+			</option>
+			<option name="guestbookWriteEntryAccess">
+				<categoryname>settings.communication.guestbook</categoryname>
+				<optiontype>select</optiontype>
+				<selectoptions><![CDATA[
+					1:wcf.user.guestbook.options.access.noone
+					2:wcf.user.guestbook.options.access.friends
+					4:wcf.user.guestbook.options.access.everyone
+				]]></selectoptions>
+				<defaultvalue>4</defaultvalue>
+				<searchable>0</searchable>
+				<visible>4</visible>
+				<editable>1</editable>
+			</option>
+			<option name="guestbookWriteCommentAccess">
+				<categoryname>settings.communication.guestbook</categoryname>
+				<optiontype>select</optiontype>
+				<selectoptions><![CDATA[
+					1:wcf.user.guestbook.options.access.noone
+					2:wcf.user.guestbook.options.access.friends
+					4:wcf.user.guestbook.options.access.everyone
+				]]></selectoptions>
+				<defaultvalue>4</defaultvalue>
+				<searchable>0</searchable>
+				<visible>4</visible>
+				<editable>1</editable>
+			</option>
+		</options>
+	</import>
+</data>
