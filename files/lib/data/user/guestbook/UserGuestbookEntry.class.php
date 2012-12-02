@@ -1,7 +1,6 @@
 <?php
 // wcf imports
 require_once(WCF_DIR.'lib/data/message/Message.class.php');
-require_once(WCF_DIR.'lib/data/user/guestbook/UserGuestbookCommentList.class.php');
 
 /**
  * Represents a guestbook entry.
@@ -19,7 +18,7 @@ class UserGuestbookEntry extends Message {
 	 * 
 	 * @var UserGuestbookCommentList
 	 */
-	public $commentList = null;
+	protected $commentList = null;
 	
 	/**
 	 * Editor object for this entry
@@ -42,8 +41,6 @@ class UserGuestbookEntry extends Message {
 			$row = WCF::getDB()->getFirstRow($sql);
 		}
 		
-		$this->commentList = new UserGuestbookCommentList();
-		
 		parent::__construct($row);
 	}
 	
@@ -53,13 +50,12 @@ class UserGuestbookEntry extends Message {
 	protected function handleData($row) {
 		parent::handleData($row);
 		$this->messageID = $this->entryID;
-		$this->commentList->sqlConditions .= 'comment.entryID = '.$this->entryID;
 	}
 	
 	/**
-	 * Gets editor object for this guestbook entry
+	 * Gets editor object for this guestbook entry.
 	 * 
-	 * @return UserGuestbookEntryEditor
+	 * @return	UserGuestbookEntryEditor
 	 */
 	public function getEditor() {
 		if ($this->editor === null) {
@@ -68,5 +64,22 @@ class UserGuestbookEntry extends Message {
 		}
 		
 		return $this->editor;
+	}
+	
+	/**
+	 * Gets the list of guestbook comments for this guestbook entry.
+	 * 
+	 * @return	UserGuestbookCommentList
+	 */
+	public function getComments() {
+		if ($this->commentList === null) {
+			// TODO: check if this would be better public because it's editable
+			require_once(WCF_DIR.'lib/data/user/guestbook/UserGuestbookCommentList.class.php');
+			$this->commentList = new UserGuestbookCommentList();
+			$this->commentList->sqlConditions .= 'comment.entryID = '.$this->entryID;
+			$this->commentList->readObjects();
+		}
+		
+		return $this->commentList->getObjects();
 	}
 }
