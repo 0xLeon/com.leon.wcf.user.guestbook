@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <data xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/options.xsd">
 	<import>
+		<categories>
+			<category name="user.profile.guestbook">
+				<parent>user.profile</parent>
+				<options>module_user_guestbook</options>
+			</category>
+		</categories>
 		<options>
 			<option name="module_user_guestbook">
 				<categoryname>module.user</categoryname>
 				<optiontype>boolean</optiontype>
 				<defaultvalue>1</defaultvalue>
+			</option>
+			<option name="user_guestbook_entries_per_page">
+				<categoryname>user.profile.guestbook</categoryname>
+				<optiontype>integer</optiontype>
+				<defaultvalue>20</defaultvalue>
 			</option>
 		</options>
 	</import>

@@ -29,9 +29,9 @@
 		<templates>templates.tar</templates>
 		<sql>install.sql</sql>
 		
-		<!--<groupoptions>groupoptions.xml</groupoptions>-->
 		<options>options.xml</options>
-		<!--<useroptions>useroptions.xml</useroptions>-->
+		<useroptions>useroptions.xml</useroptions>
+		<groupoptions>groupoptions.xml</groupoptions>
 		<userprofilemenu>userprofilemenu.xml</userprofilemenu>
 		<!--<eventlistener>eventlistener.xml</eventlistener>-->
 		<!--<cronjobs>cronjobs.xml</cronjobs>-->
