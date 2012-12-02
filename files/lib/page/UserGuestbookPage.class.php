@@ -110,7 +110,7 @@ class UserGuestbookPage extends MultipleLinkPage {
 			throw new IllegalLinkException();
 		}
 		
-		if (!$this->userPermissions['canUseGuestbook'] || !$this->modPermissions['canViewGuestbook']) {
+		if (!$this->userPermissions['canUseGuestbook'] || !$this->userPermissions['canViewGuestbook']) {
 			throw new PermissionDeniedException();
 		}
 		
