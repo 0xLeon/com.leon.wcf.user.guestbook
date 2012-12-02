@@ -106,12 +106,28 @@ class UserGuestbookPage extends MultipleLinkPage {
 		
 		UserProfileMenu::getInstance()->setActiveMenuItem('wcf.user.profile.menu.link.guestbook');
 		
-		if (!MODULE_USER_GUESTBOOK || !$this->frame->getUser()->getPermission('user.guestbook.canUseGuestbook')) {
+		if (!MODULE_USER_GUESTBOOK) {
 			throw new IllegalLinkException();
 		}
 		
-		if (!$this->userPermissions['canUseGuestbook'] || !$this->userPermissions['canViewGuestbook']) {
-			throw new PermissionDeniedException();
+		try {
+			if (!$this->userPermissions['canUseGuestbook']) {
+				throw new NamedUserException(WCF::getLanguage()->get('wcf.user.profile.error.guestbook.permissionDenied'));
+			}
+			
+			if (!$this->frame->getUser()->getPermission('user.guestbook.canUseGuestbook')) {
+				throw new NamedUserException(WCF::getLanguage()->getDynamicVariable('wcf.user.profile.error.guestbook.notActivated', array('username' => $this->frame->getUser()->username)));
+			}
+			
+			if (!$this->userPermissions['canViewGuestbook']) {
+				throw new NamedUserException(WCF::getLanguage()->getDynamicVariable('wcf.user.profile.error.guestbook.protected', array('username' => $this->frame->getUser()->username)));
+			}
+		}
+		catch (NamedUserException $e) {
+			$this->frame->assignVariables();
+			WCF::getTPL()->assign('errorMessage', $e->getMessage());
+			WCF::getTPL()->display('userProfileAccessDenied');
+			exit;
 		}
 		
 		$this->assignVariables();
