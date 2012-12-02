@@ -3,6 +3,7 @@
 require_once(WCF_DIR.'lib/page/MultipleLinkPage.class.php');
 require_once(WCF_DIR.'lib/data/user/UserProfileFrame.class.php');
 require_once(WCF_DIR.'lib/data/user/guestbook/UserGuestbookEntryList.class.php');
+require_once(WCF_DIR.'lib/system/event/EventHandler.class.php');
 
 /**
  * Shows the user profile guestbook page.
@@ -100,6 +101,8 @@ class UserGuestbookPage extends MultipleLinkPage {
 	 * @see Page::show()
 	 */
 	public function show() {
+		$this->readData();
+		
 		UserProfileMenu::getInstance()->setActiveMenuItem('wcf.user.profile.menu.link.guestbook');
 		
 		if (!MODULE_USER_GUESTBOOK || !$this->frame->getUser()->getPermission('user.guestbook.canUseGuestbook')) {
@@ -110,6 +113,12 @@ class UserGuestbookPage extends MultipleLinkPage {
 			throw new PermissionDeniedException();
 		}
 		
-		parent::show();
+		$this->assignVariables();
+		
+		EventHandler::fireAction($this, 'show');
+		
+		if (!empty($this->templateName)) {
+			WCF::getTPL()->display($this->templateName);
+		}
 	}
 }
