@@ -14,11 +14,18 @@ require_once(WCF_DIR.'lib/data/message/Message.class.php');
  */
 class UserGuestbookComment extends Message {
 	/**
-	 * Editor object for this entry
+	 * Editor object for this comment
 	 * 
 	 * @var UserGuestbookCommentEditor
 	 */
 	protected $editor = null;
+	
+	/**
+	 * Guestbook entry object for this comment
+	 * 
+	 * @var	UserGuestbookEntry
+	 */
+	protected $entry = null;
 	
 	/**
 	 * Creates a new guestbook comment object.
@@ -48,7 +55,7 @@ class UserGuestbookComment extends Message {
 	/**
 	 * Gets editor object for this guestbook comment.
 	 * 
-	 * @return UserGuestbookCommentEditor
+	 * @return	UserGuestbookCommentEditor
 	 */
 	public function getEditor() {
 		if ($this->editor === null) {
@@ -57,5 +64,19 @@ class UserGuestbookComment extends Message {
 		}
 		
 		return $this->editor;
+	}
+	
+	/**
+	 * Gets the guestbook entry object for this guestbook comment.
+	 * 
+	 * @return	UserGuestbookEntry
+	 */
+	public function getEntry() {
+		if ($this->entry === null) {
+			require_once(WCF_DIR.'lib/data/user/guestbook/UserGuestbookEntry.class.php');
+			$this->entry = new UserGuestbookEntry($this->entryID);
+		}
+		
+		return $this->entry;
 	}
 }
