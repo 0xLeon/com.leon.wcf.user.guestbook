@@ -47,7 +47,7 @@ class UserGuestbookEntryList extends DatabaseObjectList {
 	public function readObjects() {
 		$sql = "SELECT		".(!empty($this->sqlSelects) ? $this->sqlSelects.',' : '')."
 					entry.*
-			FROM		wcf".WCF_N."_cheat_database_entry entry
+			FROM		wcf".WCF_N."_user_guestbook_entry entry
 			".$this->sqlJoins."
 			".(!empty($this->sqlConditions) ? "WHERE ".$this->sqlConditions : '')."
 			".(!empty($this->sqlOrderBy) ? "ORDER BY ".$this->sqlOrderBy : '');
