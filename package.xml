@@ -26,7 +26,7 @@
 	</excludedpackages>
 	<instructions type="install">
 		<files>files.tar</files>
-		<templates>templates.tpl</templates>
+		<templates>templates.tar</templates>
 		<sql>install.sql</sql>
 		
 		<!--<groupoptions>groupoptions.xml</groupoptions>-->
