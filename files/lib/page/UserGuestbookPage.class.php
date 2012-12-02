@@ -72,7 +72,7 @@ class UserGuestbookPage extends MultipleLinkPage {
 		$this->entryList->readObjects();
 		
 		$this->userPermissions = UserGuestbookUtil::getUserPermissions($this->frame->getUser());
-		$this->modPermissions = UserGuestbookUtil::getModPermissions($this->frame->getUser());
+		$this->modPermissions = UserGuestbookUtil::getModeratorPermissions($this->frame->getUser());
 	}
 	
 	/**
