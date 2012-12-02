@@ -62,12 +62,13 @@ class UserGuestbookPage extends MultipleLinkPage {
 	 * @see	Page::readData()
 	 */
 	public function readData() {
+		$this->entryList = new UserGuestbookEntryList();
+		$this->entryList->sqlConditions = 'entry.ownerID = '.$this->frame->getUserID();
+		
 		parent::readData();
 		
-		$this->entryList = new UserGuestbookEntryList();
-		$this->entryList->sqlOffset = ($this->pageNo - 1) * $this->itemsPerPage;
+		$this->entryList->sqlOffset = $this->startIndex;
 		$this->entryList->sqlLimit = $this->itemsPerPage;
-		$this->entryList->sqlConditions = 'entry.ownerID = '.$this->frame->getUserID();
 		$this->entryList->readObjects();
 		
 		$this->userPermissions = UserGuestbookUtil::getUserPermissions($this->frame->getUser());
