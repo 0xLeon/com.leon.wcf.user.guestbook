@@ -46,7 +46,7 @@ class UserGuestbookEntryEditor extends UserGuestbookEntry {
 	 * Marks this guestbook entry.
 	 */
 	public function mark() {
-		$markedEntries = self::getMarkedEntries();
+		$markedEntries = UserGuestbookEntryEditor::getMarkedEntries();
 		
 		array_push($markedEntries, $this->entryID);
 		WCF::getSession()->register('markedGuestbookEntries', $markedEntries);
@@ -56,14 +56,15 @@ class UserGuestbookEntryEditor extends UserGuestbookEntry {
 	 * Unmarks this guestbook entry.
 	 */
 	public function unmark() {
-		$markedEntries = self::getMarkedPosts();
+		$markedEntries = UserGuestbookEntryEditor::getMarkedPosts();
+		
 		if (in_array($this->entryID, $markedEntries)) {
 			$key = array_search($this->entryID, $markedEntries);
 			
 			unset($markedEntries[$key]);
 			
 			if (count($markedEntries) === 0) {
-				self::unmarkAll();
+				UserGuestbookEntryEditor::unmarkAll();
 			}
 			else {
 				WCF::getSession()->register('markedGuestbookEntries', $markedEntries);
@@ -73,23 +74,27 @@ class UserGuestbookEntryEditor extends UserGuestbookEntry {
 	
 	/**
 	 * Moves this guestbook entry in recycle bin.
+	 * 
+	 * @param	integer			$deletedByID
+	 * @param	string			$deletedBy
+	 * @param	string			$reason
 	 */
 	public function trash($deletedByID, $deletedBy, $reason = '') {
-		self::trashAll($this->entryID, $deletedByID, $deletedBy, $reason);
+		UserGuestbookEntryEditor::trashAll(array($this->entryID), $deletedByID, $deletedBy, $reason);
 	}
 	
 	/**
 	 * Restores this guestbook entry.
 	 */
 	public function restore() {
-		self::restoreAll(array($this->entryID));
+		UserGuestbookEntryEditor::restoreAll(array($this->entryID));
 	}
 	
 	/**
 	 * Deletes this guestbook entry completely.
 	 */
 	public function delete() {
-		self::deleteAllCompletely(array($this->entryID));
+		UserGuestbookEntryEditor::deleteAllCompletely(array($this->entryID));
 	}
 	
 	/**
@@ -102,10 +107,10 @@ class UserGuestbookEntryEditor extends UserGuestbookEntry {
 	/**
 	 * Moves all guestbook entries with the given IDs in recycle bin.
 	 * 
-	 * @param	array		$entryIDs
-	 * @param	integer		$deletedByID
-	 * @param	string		$deletedBy
-	 * @param	string		$reason
+	 * @param	array<integer>		$entryIDs
+	 * @param	integer			$deletedByID
+	 * @param	string			$deletedBy
+	 * @param	string			$reason
 	 */
 	public static function trashAll($entryIDs, $deletedByID, $deletedBy, $reason = '') {
 		if (!count($entryIDs)) return;
@@ -116,14 +121,14 @@ class UserGuestbookEntryEditor extends UserGuestbookEntry {
 				deletedBy = '".escapeString($deletedBy)."',
 				deleteTime = ".TIME_NOW.",
 				deleteReason = '".escapeString($reason)."'
-			WHERE	entryID IN (".implode(',', $postIDs).")";
+			WHERE	entryID IN (".implode(',', $entryIDs).")";
 		WCF::getDB()->sendQuery($sql);
 	}
 	
 	/**
 	 * Restores all guestbook entries with the given IDs.
 	 * 
-	 * @param	array		$entryIDs
+	 * @param	array<integer>		$entryIDs
 	 */
 	public static function restoreAll($entryIDs) {
 		if (!count($entryIDs)) return;
@@ -146,7 +151,7 @@ class UserGuestbookEntryEditor extends UserGuestbookEntry {
 	/**
 	 * Deletes all guestbook entries with the given IDs.
 	 * 
-	 * @param	array		$entryIDs
+	 * @param	array<integer>		$entryIDs
 	 */
 	public static function deleteAllCompletely($entryIDs) {
 		$sql = "DELETE
@@ -157,6 +162,8 @@ class UserGuestbookEntryEditor extends UserGuestbookEntry {
 	
 	/**
 	 * Returns all marked guestbook entries.
+	 * 
+	 * @return	array<integer>
 	 */
 	public static function getMarkedEntries() {
 		$sessionVars = WCF::getSession()->getVars();
