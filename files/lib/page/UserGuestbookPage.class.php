@@ -33,6 +33,20 @@ class UserGuestbookPage extends MultipleLinkPage {
 	public $frame = null;
 	
 	/**
+	 * User permissions
+	 * 
+	 * @var	array<bool>
+	 */
+	public $userPermissions = null;
+	
+	/**
+	 * Moderator permissions
+	 * 
+	 * @var	array<bool>
+	 */
+	public $modPermissions = null;
+	
+	/**
 	 * @see Page::readParameters()
 	 */
 	public function readParameters() {
@@ -54,6 +68,9 @@ class UserGuestbookPage extends MultipleLinkPage {
 		$this->entryList->sqlLimit = $this->itemsPerPage;
 		$this->entryList->sqlConditions = 'entry.ownerID = '.$this->frame->getUserID();
 		$this->entryList->readObjects();
+		
+		$this->userPermissions = UserGuestbookUtil::getUserPermissions($this->frame->getUser());
+		$this->modPermissions = UserGuestbookUtil::getModPermissions($this->frame->getUser());
 	}
 	
 	/**
@@ -73,8 +90,8 @@ class UserGuestbookPage extends MultipleLinkPage {
 		
 		$this->frame->assignVariables();
 		WCF::getTPL()->assign(array(
-			'userPermissions' => UserGuestbookUtil::getUserPermissions($this->frame->getUser()),
-			'modPermissions' => UserGuestbookUtil::getModeratorPermissions($this->frame->getUser()),
+			'userPermissions' => $this->userPermissions,
+			'modPermissions' => $this->modPermissions,
 			'entries' => $this->entryList->getObjects()
 		));
 	}
@@ -84,10 +101,13 @@ class UserGuestbookPage extends MultipleLinkPage {
 	 */
 	public function show() {
 		UserProfileMenu::getInstance()->setActiveMenuItem('wcf.user.profile.menu.link.guestbook');
-		WCF::getUser()->checkPermission('user.guestbook.canViewGuestbook');
 		
 		if (!MODULE_USER_GUESTBOOK || !$this->frame->getUser()->getPermission('user.guestbook.canUseGuestbook')) {
 			throw new IllegalLinkException();
+		}
+		
+		if (!$this->userPermissions['canUseGuestbook'] || !$this->modPermissions['canViewGuestbook']) {
+			throw new PermissionDeniedException();
 		}
 		
 		parent::show();
