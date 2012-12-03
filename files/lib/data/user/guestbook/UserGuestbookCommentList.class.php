@@ -46,7 +46,7 @@ class UserGuestbookCommentList extends DatabaseObjectList {
 	 */
 	public function readObjects() {
 		$sql = "SELECT		".(!empty($this->sqlSelects) ? $this->sqlSelects.',' : '')."
-					entry.*
+					comment.*
 			FROM		wcf".WCF_N."_user_guestbook_comment comment
 			".$this->sqlJoins."
 			".(!empty($this->sqlConditions) ? "WHERE ".$this->sqlConditions : '')."
