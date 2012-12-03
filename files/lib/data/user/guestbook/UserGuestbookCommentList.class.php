@@ -54,7 +54,7 @@ class UserGuestbookCommentList extends DatabaseObjectList {
 		$result = WCF::getDB()->sendQuery($sql, $this->sqlLimit, $this->sqlOffset);
 		
 		while ($row = WCF::getDB()->fetchArray($result)) {
-			$this->entries[] = new $this->objectClassName(null, $row);
+			$this->comments[] = new $this->objectClassName(null, $row);
 		}
 	}
 	
