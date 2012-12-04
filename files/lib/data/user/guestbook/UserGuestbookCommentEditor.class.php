@@ -17,6 +17,8 @@ class UserGuestbookCommentEditor extends UserGuestbookComment {
 	 * Creates a new guestbook comment.
 	 * Returns a UserGuestbookCommentEditor object of the new comment.
 	 * 
+	 * TODO: additionalFields
+	 * 
 	 * @param	integer				$entryID
 	 * @param	integer				$userID
 	 * @param	string				$username

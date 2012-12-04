@@ -17,6 +17,8 @@ class UserGuestbookEntryEditor extends UserGuestbookEntry {
 	 * Creates a new guestbook entry.
 	 * Returns a UserGuestbookEntryEditor object of the new entry.
 	 * 
+	 * TODO: additionalFields
+	 * 
 	 * @param	integer				$ownerID
 	 * @param	integer				$userID
 	 * @param	string				$username
