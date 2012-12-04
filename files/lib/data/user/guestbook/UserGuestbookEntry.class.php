@@ -28,6 +28,22 @@ class UserGuestbookEntry extends Message {
 	protected $editor = null;
 	
 	/**
+	 * UserProfile object for the owner of
+	 * the guestbook this entry was posted in.
+	 * 
+	 * @var	UserProfile
+	 */
+	protected $owner = null;
+	
+	/**
+	 * UserProfile object for the author of
+	 * this guestbook entry.
+	 * 
+	 * @var	UserProfile
+	 */
+	protected $user = null;
+	
+	/**
 	 * Creates a new guestbook entry object.
 	 * 
 	 * @param	integer		$entryID
@@ -81,5 +97,33 @@ class UserGuestbookEntry extends Message {
 		}
 		
 		return $this->commentList->getObjects();
+	}
+	
+	/**
+	 * Gets the owner for the guestbook this entry was posted in.
+	 * 
+	 * @return	UserProfile
+	 */
+	public function getOwner() {
+		if ($this->owner === null) {
+			require_once(WCF_DIR.'lib/data/user/UserProfile.class.php');
+			$this->owner = new UserProfile($this->ownerID);
+		}
+		
+		return $this->owner;
+	}
+	
+	/**
+	 * Gets the author of this guestbook entry.
+	 * 
+	 * @return	UserProfile
+	 */
+	public function getUser() {
+		if ($this->user === null) {
+			require_once(WCF_DIR.'lib/data/user/UserProfile.class.php');
+			$this->user = new UserProfile($this->userID);
+		}
+		
+		return $this->user;
 	}
 }
