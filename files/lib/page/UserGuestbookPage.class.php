@@ -20,6 +20,13 @@ class UserGuestbookPage extends MultipleLinkPage {
 	public $itemsPerPage = USER_GUESTBOOK_ENTRIES_PER_PAGE;
 	
 	/**
+	 * ID of the guestbook entry to jump to.
+	 * 
+	 * @var	integer
+	 */
+	public $entryID = 0;
+	
+	/**
 	 * List object of guestbook entries. 
 	 * 
 	 * @var	UserGuestbookEntryList
@@ -53,6 +60,8 @@ class UserGuestbookPage extends MultipleLinkPage {
 	public function readParameters() {
 		parent::readParameters();
 		
+		if (isset($_REQUEST['entryID'])) $this->entryID = intval($_REQUEST['entryID']);
+		
 		$this->frame = new UserProfileFrame($this);
 		
 		if (WCF::getUser()->guestbookEntriesPerPage) $this->itemsPerPage = WCF::getUser()->guestbookEntriesPerPage;
@@ -62,8 +71,15 @@ class UserGuestbookPage extends MultipleLinkPage {
 	 * @see	Page::readData()
 	 */
 	public function readData() {
+		$this->entry = new UserGuestbookEntry($this->entryID);
 		$this->entryList = new UserGuestbookEntryList();
+		
 		$this->entryList->sqlConditions = 'entry.ownerID = '.$this->frame->getUserID();
+		$this->entryList->sqlOrderBy = 'time DESC';
+		
+		// TODO: check data here, maybe separate function with event (entry)
+		
+		if ($this->entry->entryID) $this->calculatePageNo();
 		
 		parent::readData();
 		
@@ -137,5 +153,17 @@ class UserGuestbookPage extends MultipleLinkPage {
 		if (!empty($this->templateName)) {
 			WCF::getTPL()->display($this->templateName);
 		}
+	}
+	
+	/**
+	 * Calculates the page of the entry if there's an entryID given.
+	 */
+	protected function calculatePageNo() {
+		$sql = "SELECT	COUNT(*) AS count
+			FROM	wcf".WCF_N."_user_guestbook_entry
+			WHERE	".$this->entryList->sqlConditions."
+				AND time >= ".$this->entry->time;
+		$row = WCF::getDB()->getFirstRow($sql);
+		$this->pageNo = intval(ceil($row['count'] / $this->itemsPerPage));
 	}
 }
