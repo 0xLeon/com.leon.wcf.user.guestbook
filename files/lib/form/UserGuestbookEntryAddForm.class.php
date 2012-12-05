@@ -23,6 +23,8 @@ class UserGuestbookEntryAddForm extends MessageForm {
 	// TODO: set default to false when done
 	public $send = true;
 	
+	// TODO: flood controll? Have to set $messageTable
+	
 	/**
 	 * Guestbook owner user ID
 	 * 
@@ -37,9 +39,33 @@ class UserGuestbookEntryAddForm extends MessageForm {
 	 */
 	public $owner = null;
 	
+	/**
+	 * User ID of the user adding this entry.
+	 * 
+	 * @var integer
+	 */
 	public $userID = 0;
+	
+	/**
+	 * Username of the user adding this entry.
+	 * 
+	 * @var	string
+	 */
 	public $username = '';
+	
+	/**
+	 * IP address of the user adding this entry.
+	 * 
+	 * @var	string
+	 */
 	public $ipAddress = '';
+	
+	/**
+	 * Additional parameters for new guestbook entry.
+	 * 
+	 * @var	array<mixed>
+	 */
+	public $additionalParameters = array();
 	
 	/**
 	 * New guestbook entry object
