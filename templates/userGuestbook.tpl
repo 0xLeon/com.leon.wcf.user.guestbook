@@ -26,7 +26,7 @@
 {assign var='searchFieldTitle' value='{lang}wcf.user.profile.search.query{/lang}'}
 {capture assign=searchHiddenFields}
 	<input type="hidden" name="ownerID" value="{@$user->userID}" />
-	<input type="hidden" name="types[]" value="guestbookEntry" />
+	<input type="hidden" name="types[]" value="guestbook" />
 {/capture}
 {* --- end --- *}
 {include file='header' sandbox=false}
