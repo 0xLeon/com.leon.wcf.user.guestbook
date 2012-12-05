@@ -47,7 +47,7 @@
 				
 				{if $entries|count > 0}
 					{foreach from=$entries item=entry}
-						{* entry output *}
+						<pre id="entry{$entry->entryID}" style="border: 1px solid #000; padding: 5px;>{@$entry|print_r:true}</pre>
 					{/foreach}
 				
 					<div class="contentFooter">
