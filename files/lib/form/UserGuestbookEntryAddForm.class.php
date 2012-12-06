@@ -21,8 +21,7 @@ class UserGuestbookEntryAddForm extends MessageForm {
 	public $templateName = 'userGuestbookEntryAdd';
 	
 	public $preview = false;
-	// TODO: set default to false when done
-	public $send = true;
+	public $send = false;
 	
 	// TODO: flood controll? Have to set $messageTable
 	
@@ -83,10 +82,11 @@ class UserGuestbookEntryAddForm extends MessageForm {
 	public function readFormParameters() {
 		parent::readFormParameters();
 		
+		if (isset($_POST['preview'])) $this->preview = (bool) intval($_POST['preview']);
+		if (isset($_POST['send'])) $this->send = (bool) intval($_POST['send']);
+		
 		$this->userID = WCF::getUser()->userID;
 		$this->ipAddress = WCF::getUser()->ipAddress;
-		
-		// TODO: preview
 	}
 	
 	/**
