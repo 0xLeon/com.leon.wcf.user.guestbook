@@ -78,17 +78,6 @@ class UserGuestbookEntryAddForm extends MessageForm {
 	}
 	
 	/**
-	 * @see	Page::readData()
-	 */
-	public function readData() {
-		parent::readData();
-		
-		if (!count($_POST)) {
-			$this->authorname = WCF::getSession()->username;
-		}
-	}
-	
-	/**
 	 * @see	Form::readFormParameters()
 	 */
 	public function readFormParameters() {
@@ -107,27 +96,6 @@ class UserGuestbookEntryAddForm extends MessageForm {
 		parent::submit();
 		
 		// TODO: preview
-	}
-	
-	/**
-	 * @see	Form::save()
-	 */
-	public function save() {
-		parent::save();
-		
-		$options = $this->getOptions();
-		
-		$this->newGuestbookEntry = UserGuestbookEntryEditor::create($this->frame->getUser()->userID, $this->authorID, $this->authorname, $this->text, $this->ipAddress, (bool) $options['enableSmilies'], (bool) $options['enableHtml'], (bool) $options['enableBBCodes']);
-		
-		$this->saved();
-		
-		HeaderUtil::redirect('index.php?page=UserGuestbook&userID='.$this->frame->getUser()->userID.'&entryID='.$this->newGuestbookEntry->entryID.SID_ARG_2ND_NOT_ENCODED.'#entry'.$this->newGuestbookEntry->entryID);
-	}
-	
-	public function assignVariables() {
-		parent::assignVariables();
-		
-		$this->frame->assignVariables();
 	}
 	
 	/**
@@ -167,4 +135,39 @@ class UserGuestbookEntryAddForm extends MessageForm {
 	 * Does nothing.
 	 */
 	protected function validateSubject() { }
+	
+	/**
+	 * @see	Form::save()
+	 */
+	public function save() {
+		parent::save();
+		
+		$options = $this->getOptions();
+		
+		$this->newGuestbookEntry = UserGuestbookEntryEditor::create($this->frame->getUser()->userID, $this->authorID, $this->authorname, $this->text, $this->ipAddress, (bool) $options['enableSmilies'], (bool) $options['enableHtml'], (bool) $options['enableBBCodes']);
+		
+		$this->saved();
+		
+		HeaderUtil::redirect('index.php?page=UserGuestbook&userID='.$this->frame->getUser()->userID.'&entryID='.$this->newGuestbookEntry->entryID.SID_ARG_2ND_NOT_ENCODED.'#entry'.$this->newGuestbookEntry->entryID);
+	}
+	
+	/**
+	 * @see	Page::readData()
+	 */
+	public function readData() {
+		parent::readData();
+		
+		if (!count($_POST)) {
+			$this->authorname = WCF::getSession()->username;
+		}
+	}
+	
+	/**
+	 * @see	Page::assignVariables()
+	 */
+	public function assignVariables() {
+		parent::assignVariables();
+		
+		$this->frame->assignVariables();
+	}
 }
