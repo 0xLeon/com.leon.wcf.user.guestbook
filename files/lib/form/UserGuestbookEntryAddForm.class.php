@@ -1,7 +1,7 @@
 <?php
 // wcf imports
 require_once(WCF_DIR.'lib/form/MessageForm.class.php');
-require_once(WCF_DIR.'lib/data/user/UserProfile.class.php');
+require_once(WCF_DIR.'lib/data/user/UserProfileFrame.class.php');
 require_once(WCF_DIR.'lib/data/user/guestbook/UserGuestbookEntryEditor.class.php');
 
 /**
@@ -18,6 +18,7 @@ class UserGuestbookEntryAddForm extends MessageForm {
 	public $showPoll = false;
 	public $showSignatureSetting = false;
 	public $permissionType = 'guestbook';
+	public $templateName = 'userGuestbookEntryAdd';
 	
 	public $preview = false;
 	// TODO: set default to false when done
@@ -26,32 +27,25 @@ class UserGuestbookEntryAddForm extends MessageForm {
 	// TODO: flood controll? Have to set $messageTable
 	
 	/**
-	 * Guestbook owner user ID
+	 * User profile frame.
 	 * 
-	 * @var	integer
+	 * @var	UserProfileFrame
 	 */
-	public $owenerID = 0;
-	
-	/**
-	 * Guestbook owner user object
-	 * 
-	 * @var	UserProfile
-	 */
-	public $owner = null;
+	public $frame = null;
 	
 	/**
 	 * User ID of the user adding this entry.
 	 * 
 	 * @var integer
 	 */
-	public $userID = 0;
+	public $authorID = 0;
 	
 	/**
 	 * Username of the user adding this entry.
 	 * 
 	 * @var	string
 	 */
-	public $username = '';
+	public $authorname = '';
 	
 	/**
 	 * IP address of the user adding this entry.
@@ -80,7 +74,18 @@ class UserGuestbookEntryAddForm extends MessageForm {
 	public function readParameters() {
 		parent::readParameters();
 		
-		if (isset($_REQUEST['ownerID'])) $this->ownerID = intval($_REQUEST['ownerID']);
+		$this->frame = new UserProfileFrame($this);
+	}
+	
+	/**
+	 * @see	Page::readData()
+	 */
+	public function readData() {
+		parent::readData();
+		
+		if (!count($_POST)) {
+			$this->authorname = WCF::getSession()->username;
+		}
 	}
 	
 	/**
@@ -112,11 +117,50 @@ class UserGuestbookEntryAddForm extends MessageForm {
 		
 		$options = $this->getOptions();
 		
-		$this->newGuestbookEntry = UserGuestbookEntryEditor::create($this->ownerID, $this->userID, $this->username, $this->text, $this->ipAddress, (bool) $options['enableSmilies'], (bool) $options['enableHtml'], (bool) $options['enableBBCodes']);
+		$this->newGuestbookEntry = UserGuestbookEntryEditor::create($this->frame->getUser()->userID, $this->authorID, $this->authorname, $this->text, $this->ipAddress, (bool) $options['enableSmilies'], (bool) $options['enableHtml'], (bool) $options['enableBBCodes']);
 		
 		$this->saved();
 		
-		HeaderUtil::redirect('index.php?page=UserGuestbook&entryID='.$this->newGuestbookEntry->entryID.SID_ARG_2ND_NOT_ENCODED.'#entry'.$this->newGuestbookEntry->entryID);
+		HeaderUtil::redirect('index.php?page=UserGuestbook&userID='.$this->frame->getUser()->userID.'&entryID='.$this->newGuestbookEntry->entryID.SID_ARG_2ND_NOT_ENCODED.'#entry'.$this->newGuestbookEntry->entryID);
+	}
+	
+	public function assignVariables() {
+		parent::assignVariables();
+		
+		$this->frame->assignVariables();
+	}
+	
+	/**
+	 * @see	Form::validate()
+	 */
+	public function validate() {
+		parent::validate();
+		
+		$this->validateUsername();
+	}
+	
+	/**
+	 * Validates the username
+	 */
+	protected function validateUsername() {
+		if (!WCF::getUser()->userID) {
+			if (empty($this->authorname)) {
+				throw new UserInputException('authorname');
+			}
+			
+			if (!UserUtil::isValidUsername($this->authorname)) {
+				throw new UserInputException('authorname', 'notValid');
+			}
+			
+			if (!UserUtil::isAvailableUsername($this->authorname)) {
+				throw new UserInputException('authorname', 'notAvailable');
+			}
+			
+			WCF::getSession()->setUsername($this->authorname);
+		} 
+		else {
+			$this->authorname = WCF::getUser()->username;
+		}
 	}
 	
 	/**
