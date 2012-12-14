@@ -40,7 +40,7 @@
 				<h3 class="subheadline">{lang}wcf.user.guestbook{/lang}</h3>
 				
 				<div class="contentHeader">
-					{pages print=true assign=pagesLinks link="index.php?page=UserGuestbook&userID=$user->userID&pageNo=%d"|concat:SID_ARG_2ND_NOT_ENCODED}
+					{pages print=true assign=pagesLinks link="index.php?page=UserGuestbook&userID=$userID&pageNo=%d"|concat:SID_ARG_2ND_NOT_ENCODED}
 					
 					{* large buttons *}
 				</div>
