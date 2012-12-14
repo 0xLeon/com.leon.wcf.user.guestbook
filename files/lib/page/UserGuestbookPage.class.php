@@ -75,7 +75,7 @@ class UserGuestbookPage extends MultipleLinkPage {
 		$this->entryList = new UserGuestbookEntryList();
 		
 		$this->entryList->sqlConditions = 'entry.ownerID = '.$this->frame->getUserID();
-		$this->entryList->sqlOrderBy = 'time DESC';
+		$this->entryList->sqlOrderBy = 'time, entryID DESC';
 		
 		// TODO: check data here, maybe separate function with event (entry)
 		
@@ -83,7 +83,7 @@ class UserGuestbookPage extends MultipleLinkPage {
 		
 		parent::readData();
 		
-		$this->entryList->sqlOffset = $this->startIndex;
+		$this->entryList->sqlOffset = $this->startIndex - 1;
 		$this->entryList->sqlLimit = $this->itemsPerPage;
 		$this->entryList->readObjects();
 		
@@ -160,9 +160,9 @@ class UserGuestbookPage extends MultipleLinkPage {
 	 */
 	protected function calculatePageNo() {
 		$sql = "SELECT	COUNT(*) AS count
-			FROM	wcf".WCF_N."_user_guestbook_entry
+			FROM	wcf".WCF_N."_user_guestbook_entry entry
 			WHERE	".$this->entryList->sqlConditions."
-				AND time >= ".$this->entry->time;
+				AND entry.time >= ".$this->entry->time;
 		$row = WCF::getDB()->getFirstRow($sql);
 		$this->pageNo = intval(ceil($row['count'] / $this->itemsPerPage));
 	}
