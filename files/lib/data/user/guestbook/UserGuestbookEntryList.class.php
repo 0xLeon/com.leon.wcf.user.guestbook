@@ -28,6 +28,9 @@ class UserGuestbookEntryList extends DatabaseObjectList {
 	 */
 	public $objectClassName = 'UserGuestbookEntry';
 	
+	protected $ownerIDs = null;
+	protected $authorIDs = null;
+	
 	/**
 	 * @see DatabaseObjectList::countObjects()
 	 */
@@ -54,8 +57,100 @@ class UserGuestbookEntryList extends DatabaseObjectList {
 		$result = WCF::getDB()->sendQuery($sql, $this->sqlLimit, $this->sqlOffset);
 		
 		while ($row = WCF::getDB()->fetchArray($result)) {
-			$this->entries[] = new $this->objectClassName(null, $row);
+			$this->entries[$row['entryID']] = new $this->objectClassName(null, $row);
 		}
+	}
+	
+	public function readOwners() {
+		if (!count($this->entries)) {
+			return array();
+		}
+		
+		$users = array();
+		
+		$sql = "SELECT		session.requestURI,
+					session.requestMethod,
+					session.ipAddress,
+					session.userAgent,
+					rank.*,
+					avatar.*,
+					GROUP_CONCAT(DISTINCT groups.groupID ORDER BY groups.groupID ASC SEPARATOR ',') AS groupIDs,
+					GROUP_CONCAT(DISTINCT languages.languageID ORDER BY languages.languageID ASC SEPARATOR ',') AS languageIDs,
+					user_option.*,
+					user.*
+			FROM		wcf".WCF_N."_user user
+			LEFT JOIN	wcf".WCF_N."_avatar avatar
+			ON		(avatar.avatarID = user.avatarID)
+			LEFT JOIN	wcf".WCF_N."_session session
+			ON		(session.userID = user.userID
+					AND session.packageID = ".PACKAGE_ID."
+					AND session.lastActivityTime > ".(TIME_NOW - USER_ONLINE_TIMEOUT).")
+			LEFT JOIN	wcf".WCF_N."_user_rank rank
+			ON		(rank.rankID = user.rankID)
+			LEFT JOIN	wcf".WCF_N."_user_to_groups groups
+			ON		(groups.userID = user.userID)
+			LEFT JOIN	wcf".WCF_N."_user_to_languages languages
+			ON		(languages.userID = user.userID)
+			LEFT JOIN	wcf".WCF_N."_user_option_value user_option
+			ON		(user_option.userID = user.userID)
+			WHERE		user.userID IN (0,".implode(',', $this->getOwnerIDs()).")
+			GROUP BY	user.userID";
+		$result = WCF::getDB()->sendQuery($sql);
+		while ($row = WCF::getDB()->fetchArray($result)) {
+			$users[$row['userID']] = new UserProfile(null, $row);
+		}
+		
+		foreach ($this->entries as $entry) {
+			$entry->setOwner($users[$entry->ownerID]);
+		}
+		
+		unset($users);
+	}
+	
+	public function readAuthors() {
+		if (!count($this->entries)) {
+			return array();
+		}
+		
+		$users = array();
+		
+		$sql = "SELECT		session.requestURI,
+					session.requestMethod,
+					session.ipAddress,
+					session.userAgent,
+					rank.*,
+					avatar.*,
+					GROUP_CONCAT(DISTINCT groups.groupID ORDER BY groups.groupID ASC SEPARATOR ',') AS groupIDs,
+					GROUP_CONCAT(DISTINCT languages.languageID ORDER BY languages.languageID ASC SEPARATOR ',') AS languageIDs,
+					user_option.*,
+					user.*
+			FROM		wcf".WCF_N."_user user
+			LEFT JOIN	wcf".WCF_N."_avatar avatar
+			ON		(avatar.avatarID = user.avatarID)
+			LEFT JOIN	wcf".WCF_N."_session session
+			ON		(session.userID = user.userID
+					AND session.packageID = ".PACKAGE_ID."
+					AND session.lastActivityTime > ".(TIME_NOW - USER_ONLINE_TIMEOUT).")
+			LEFT JOIN	wcf".WCF_N."_user_rank rank
+			ON		(rank.rankID = user.rankID)
+			LEFT JOIN	wcf".WCF_N."_user_to_groups groups
+			ON		(groups.userID = user.userID)
+			LEFT JOIN	wcf".WCF_N."_user_to_languages languages
+			ON		(languages.userID = user.userID)
+			LEFT JOIN	wcf".WCF_N."_user_option_value user_option
+			ON		(user_option.userID = user.userID)
+			WHERE		user.userID IN (0,".implode(',', $this->getAuthorIDs()).")
+			GROUP BY	user.userID";
+		$result = WCF::getDB()->sendQuery($sql);
+		while ($row = WCF::getDB()->fetchArray($result)) {
+			$users[$row['userID']] = new UserProfile(null, $row);
+		}
+		
+		foreach ($this->entries as $entry) {
+			$entry->setAuthor($users[$entry->userID]);
+		}
+		
+		unset($users);
 	}
 	
 	/**
@@ -63,5 +158,41 @@ class UserGuestbookEntryList extends DatabaseObjectList {
 	 */
 	public function getObjects() {
 		return $this->entries;
+	}
+	
+	protected function getOwnerIDs() {
+		if (!count($this->entries)) {
+			$this->ownerIDs = array();
+			
+			return $this->ownerIDs;
+		}
+		
+		if ($this->ownerIDs === null) {
+			$this->ownerIDs = array();
+			
+			foreach ($this->entries as $entry) {
+				$this->ownerIDs[] = $entry->ownerID;
+			}
+		}
+		
+		return $this->ownerIDs;
+	}
+	
+	protected function getAuthorIDs() {
+		if (!count($this->entries)) {
+			$this->authorIDs = array();
+			
+			return $this->authorIDs;
+		}
+		
+		if ($this->authorIDs === null) {
+			$this->authorIDs = array();
+			
+			foreach ($this->entries as $entry) {
+				$this->authorIDs[] = $entry->userID;
+			}
+		}
+		
+		return $this->authorIDs;
 	}
 }

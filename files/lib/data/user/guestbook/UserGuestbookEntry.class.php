@@ -1,6 +1,7 @@
 <?php
 // wcf imports
 require_once(WCF_DIR.'lib/data/message/Message.class.php');
+require_once(WCF_DIR.'lib/data/user/UserProfile.class.php');
 
 /**
  * Represents a guestbook entry.
@@ -41,7 +42,7 @@ class UserGuestbookEntry extends Message {
 	 * 
 	 * @var	UserProfile
 	 */
-	protected $user = null;
+	protected $author = null;
 	
 	/**
 	 * Creates a new guestbook entry object.
@@ -106,7 +107,6 @@ class UserGuestbookEntry extends Message {
 	 */
 	public function getOwner() {
 		if ($this->owner === null) {
-			require_once(WCF_DIR.'lib/data/user/UserProfile.class.php');
 			$this->owner = new UserProfile($this->ownerID);
 		}
 		
@@ -114,16 +114,33 @@ class UserGuestbookEntry extends Message {
 	}
 	
 	/**
+	 * Sets the owner for the guestbook this entry was posted in.
+	 * 
+	 * @param	UserProfile	$user
+	 */
+	public function setOwner(UserProfile $user) {
+		$this->owner = $user;
+	}
+	
+	/**
 	 * Gets the author of this guestbook entry.
 	 * 
 	 * @return	UserProfile
 	 */
-	public function getUser() {
-		if ($this->user === null) {
-			require_once(WCF_DIR.'lib/data/user/UserProfile.class.php');
-			$this->user = new UserProfile($this->userID);
+	public function getAuthor() {
+		if ($this->author === null) {
+			$this->author = new UserProfile($this->userID);
 		}
 		
-		return $this->user;
+		return $this->author;
+	}
+	
+	/**
+	 * Sets the author of this guestbook entry.
+	 * 
+	 * @param	UserProfile	$user
+	 */
+	public function setAuthor(UserProfile $user) {
+		$this->author = $user;
 	}
 }
