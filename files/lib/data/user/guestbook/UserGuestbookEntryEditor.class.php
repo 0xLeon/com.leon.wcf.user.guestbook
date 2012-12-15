@@ -33,7 +33,7 @@ class UserGuestbookEntryEditor extends UserGuestbookEntry {
 		$sql = "INSERT
 			INTO	wcf".WCF_N."_user_guestbook_entry
 				(ownerID, userID, username, message, time, ipAddress, enableSmilies, enableHtml, enableBBCodes)
-			VALUES	(".$ownerID.",".$userID.",".escapeString($username).",".escapeString($message).",".TIME_NOW.",".escapeString($ipAddress).",".((int) $enableSmilies).",".((int) $enableHtml).",".((int) $enableBBCodes).")";
+			VALUES	(".$ownerID.",".$userID.",'".escapeString($username)."','".escapeString($message)."',".TIME_NOW.",'".escapeString($ipAddress)."',".((int) $enableSmilies).",".((int) $enableHtml).",".((int) $enableBBCodes).")";
 		WCF::getDB()->sendQuery($sql);
 		
 		return new UserGuestbookEntryEditor(WCF::getDB()->getInsertID());
