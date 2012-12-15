@@ -88,7 +88,7 @@ class UserGuestbookEntryAddForm extends MessageForm {
 		if (isset($_POST['send'])) $this->send = (bool) intval($_POST['send']);
 		
 		$this->authorID = WCF::getUser()->userID;
-		$this->ipAddress = WCF::getUser()->ipAddress;
+		$this->ipAddress = WCF::getSession()->ipAddress;
 	}
 	
 	/**
