@@ -17,11 +17,13 @@ require_once(WCF_DIR.'lib/data/user/guestbook/UserGuestbookEntryEditor.class.php
 class UserGuestbookEntryAddForm extends MessageForm {
 	public $showPoll = false;
 	public $showSignatureSetting = false;
-	public $permissionType = 'guestbook';
+	public $showAttachments = false;
+	// TODO: add own guestbook permissions (canUserBBCode etc.)?
 	public $templateName = 'userGuestbookEntryAdd';
 	
 	public $preview = false;
 	public $send = false;
+	public $action = 'add';
 	
 	// TODO: flood controll? Have to set $messageTable
 	
@@ -85,7 +87,7 @@ class UserGuestbookEntryAddForm extends MessageForm {
 		if (isset($_POST['preview'])) $this->preview = (bool) intval($_POST['preview']);
 		if (isset($_POST['send'])) $this->send = (bool) intval($_POST['send']);
 		
-		$this->userID = WCF::getUser()->userID;
+		$this->authorID = WCF::getUser()->userID;
 		$this->ipAddress = WCF::getUser()->ipAddress;
 	}
 	
@@ -169,5 +171,19 @@ class UserGuestbookEntryAddForm extends MessageForm {
 		parent::assignVariables();
 		
 		$this->frame->assignVariables();
+		WCF::getTPL()->assign(array(
+			'action' => $this->action
+		));
+	}
+	
+	/**
+	 * @see	Page::show()
+	 */
+	public function show() {
+		UserProfileMenu::getInstance()->setActiveMenuItem('wcf.user.profile.menu.link.guestbook');
+		
+		// TODO: check permissions and shit
+		
+		parent::show();
 	}
 }
