@@ -75,7 +75,7 @@ class UserGuestbookPage extends MultipleLinkPage {
 		$this->entryList = new UserGuestbookEntryList();
 		
 		$this->entryList->sqlConditions = 'entry.ownerID = '.$this->frame->getUserID();
-		$this->entryList->sqlOrderBy = 'time, entryID DESC';
+		$this->entryList->sqlOrderBy = 'entry.time DESC, entry.entryID DESC';
 		
 		// TODO: check data here, maybe separate function with event (entry)
 		
