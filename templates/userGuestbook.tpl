@@ -47,7 +47,28 @@
 				
 				{if $entries|count > 0}
 					{foreach from=$entries item=entry}
-						<pre id="entry{$entry->entryID}" style="border: 1px solid #000; padding: 5px;>{@$entry|print_r:true}</pre>
+						{* <pre id="entry{$entry->entryID}" style="border: 1px solid #000; padding: 5px;">{@$entry|print_r:true}</pre> *}
+						
+						<a id="guestbookEntry{$entry->entryID}"></a>
+						<div class="message">
+							<div class="userAvatar" style="float: left;">
+								{if $entry->getAuthor()->getAvatar()}
+									{assign var=tmp value=$entry->getAuthor()->getAvatar()->setMaxSize(50, 50)}
+									
+									{if $entry->getAuthor()->userID}<a href="{* profile link *}" title="{lang username=$entry->username}wcf.user.viewProfile{/lang}">{/if}{@$entry->getAuthor()->getAvatar()}{if $entry->getAuthor()->userID}</a>{/if}
+								{else}
+									{if $entry->getAuthor()->userID}<a href="{* profile link *}" title="{lang username=$entry->username}wcf.user.viewProfile{/lang}">{/if}<img src="{@RELATIVE_WCF_DIR}images/avatars/avatar-default.png" alt="" style="width: 50px; height: 50px;" />{if $entry->getAuthor()->userID}</a>{/if}
+								{/if}
+							</div>
+							
+							<p class="username">
+								{if $entry->getAuthor()->userID}<a href="{* profile link *}" title="{lang username=$entry->username}wcf.user.viewProfile{/lang}">{/if}{$entry->username}{if $entry->getAuthor()->userID}</a>{/if}
+							</p>
+							
+							<p id="guestbookEntryMessage{$entry->entryID}" class="messageBody" style="margin-left: 120px;">
+								{$entry->message}
+							</p>
+						</div>
 					{/foreach}
 				
 					<div class="contentFooter">
