@@ -86,6 +86,8 @@ class UserGuestbookPage extends MultipleLinkPage {
 		$this->entryList->sqlOffset = $this->startIndex - 1;
 		$this->entryList->sqlLimit = $this->itemsPerPage;
 		$this->entryList->readObjects();
+		$this->entryList->readOwners();
+		$this->entryList->readAuthors();
 		
 		$this->userPermissions = UserGuestbookUtil::getUserPermissions($this->frame->getUser());
 		$this->modPermissions = UserGuestbookUtil::getModeratorPermissions($this->frame->getUser());
