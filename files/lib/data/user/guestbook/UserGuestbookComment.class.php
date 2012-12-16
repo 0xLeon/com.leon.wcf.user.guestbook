@@ -1,6 +1,7 @@
 <?php
 // wcf imports
 require_once(WCF_DIR.'lib/data/message/Message.class.php');
+require_once(WCF_DIR.'lib/data/user/UserProfile.class.php');
 
 /**
  * Represents a guestbook comment.
@@ -26,6 +27,14 @@ class UserGuestbookComment extends Message {
 	 * @var	UserGuestbookEntry
 	 */
 	protected $entry = null;
+	
+	/**
+	 * UserProfile object for the author of
+	 * this guestbook comment.
+	 * 
+	 * @var	UserProfile
+	 */
+	protected $author = null;
 	
 	/**
 	 * Creates a new guestbook comment object.
@@ -78,5 +87,27 @@ class UserGuestbookComment extends Message {
 		}
 		
 		return $this->entry;
+	}
+	
+	/**
+	 * Gets the author of this guestbook comment.
+	 * 
+	 * @return	UserProfile
+	 */
+	public function getAuthor() {
+		if ($this->author === null) {
+			$this->author = new UserProfile($this->userID);
+		}
+		
+		return $this->author;
+	}
+	
+	/**
+	 * Sets the author of this guestbook comment.
+	 * 
+	 * @param	UserProfile	$user
+	 */
+	public function setAuthor(UserProfile $user) {
+		$this->author = $user;
 	}
 }
