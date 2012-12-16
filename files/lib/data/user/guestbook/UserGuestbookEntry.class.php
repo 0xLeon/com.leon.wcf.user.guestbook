@@ -52,8 +52,11 @@ class UserGuestbookEntry extends Message {
 	 */
 	public function __construct($entryID, $row = null) {
 		if ($entryID !== null) {
-			$sql = "SELECT		entry.*
+			$sql = "SELECT		entry.*,
+						COUNT(comment.commentID) AS commentCount
 				FROM		wcf".WCF_N."_user_guestbook_entry entry
+				LEFT JOIN	wcf".WCF_N."_user_guestbook_comment comment
+				ON		(entry.entryID = comment.entryID)
 				WHERE		entry.entryID = ".$entryID;
 			$row = WCF::getDB()->getFirstRow($sql);
 		}

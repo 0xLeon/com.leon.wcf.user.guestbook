@@ -50,11 +50,15 @@ class UserGuestbookEntryList extends DatabaseObjectList {
 	 */
 	public function readObjects() {
 		$sql = "SELECT		".(!empty($this->sqlSelects) ? $this->sqlSelects.',' : '')."
-					entry.*
+					entry.*,
+					COUNT(comment.commentID) AS commentCount
 			FROM		wcf".WCF_N."_user_guestbook_entry entry
+			LEFT JOIN	wcf".WCF_N."_user_guestbook_comment comment
+			ON		(entry.entryID = comment.entryID)
 			".$this->sqlJoins."
 			".(!empty($this->sqlConditions) ? "WHERE ".$this->sqlConditions : '')."
-			".(!empty($this->sqlOrderBy) ? "ORDER BY ".$this->sqlOrderBy : '');
+			".(!empty($this->sqlOrderBy) ? "ORDER BY ".$this->sqlOrderBy : '')."
+			GROUP BY	entry.entryID";
 		$result = WCF::getDB()->sendQuery($sql, $this->sqlLimit, $this->sqlOffset);
 		
 		while ($row = WCF::getDB()->fetchArray($result)) {
