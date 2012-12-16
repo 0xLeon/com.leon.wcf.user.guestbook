@@ -2,6 +2,7 @@
 // wcf imports
 require_once(WCF_DIR.'lib/data/message/Message.class.php');
 require_once(WCF_DIR.'lib/data/user/UserProfile.class.php');
+require_once(WCF_DIR.'lib/data/user/guestbook/UserGuestbookCommentList.class.php');
 
 /**
  * Represents a guestbook entry.
@@ -15,11 +16,18 @@ require_once(WCF_DIR.'lib/data/user/UserProfile.class.php');
  */
 class UserGuestbookEntry extends Message {
 	/**
-	 * List of all comments on this entry
+	 * Comment list object for this guestbook entry 
 	 * 
 	 * @var UserGuestbookCommentList
 	 */
 	protected $commentList = null;
+	
+	/**
+	 * List of all comments on this entry
+	 * 
+	 * @var	array<UserGuestbookComment>
+	 */
+	protected $comments = null;
 	
 	/**
 	 * Editor object for this entry
@@ -61,6 +69,8 @@ class UserGuestbookEntry extends Message {
 			$row = WCF::getDB()->getFirstRow($sql);
 		}
 		
+		$this->commentList = new UserGuestbookCommentList();
+		
 		parent::__construct($row);
 	}
 	
@@ -70,6 +80,7 @@ class UserGuestbookEntry extends Message {
 	protected function handleData($row) {
 		parent::handleData($row);
 		$this->messageID = $this->entryID;
+		$this->commentList->sqlConditions .= 'comment.entryID = '.$this->entryID;
 	}
 	
 	/**
@@ -87,20 +98,40 @@ class UserGuestbookEntry extends Message {
 	}
 	
 	/**
-	 * Gets the list of guestbook comments for this guestbook entry.
+	 * Gets the guestbook comment list object
 	 * 
 	 * @return	UserGuestbookCommentList
 	 */
+	public function getCommentList() {
+		return $this->commentList();
+	}
+	
+	/**
+	 * Gets the list of guestbook comments for this guestbook entry.
+	 * 
+	 * @return	array<UserGuestbookComment>
+	 */
 	public function getComments() {
-		if ($this->commentList === null) {
-			// TODO: check if this would be better public because it's editable
-			require_once(WCF_DIR.'lib/data/user/guestbook/UserGuestbookCommentList.class.php');
-			$this->commentList = new UserGuestbookCommentList();
-			$this->commentList->sqlConditions .= 'comment.entryID = '.$this->entryID;
-			$this->commentList->readObjects();
+		if ($this->comments === null) {
+			if ($this->commentCount > 0) {
+				$this->getCommentList()->readObjects();
+				$this->comments = $this->getCommentList()->getObjects();
+			}
+			else {
+				$this->comments = array();
+			}
 		}
 		
-		return $this->commentList->getObjects();
+		return $this->comments;
+	}
+	
+	/**
+	 * Sets the list of guestbook comments for this guestbook entry.
+	 * 
+	 * @param	array<UserGuestbookComment>	$comments
+	 */
+	public function setComments($comments) {
+		$this->comments = $comments;
 	}
 	
 	/**
