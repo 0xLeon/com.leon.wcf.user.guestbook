@@ -59,8 +59,8 @@ class UserGuestbookEntryList extends DatabaseObjectList {
 			ON		(entry.entryID = comment.entryID)
 			".$this->sqlJoins."
 			".(!empty($this->sqlConditions) ? "WHERE ".$this->sqlConditions : '')."
-			".(!empty($this->sqlOrderBy) ? "ORDER BY ".$this->sqlOrderBy : '')."
-			GROUP BY	entry.entryID";
+			GROUP BY	entry.entryID
+			".(!empty($this->sqlOrderBy) ? "ORDER BY ".$this->sqlOrderBy : '');
 		$result = WCF::getDB()->sendQuery($sql, $this->sqlLimit, $this->sqlOffset);
 		
 		while ($row = WCF::getDB()->fetchArray($result)) {
