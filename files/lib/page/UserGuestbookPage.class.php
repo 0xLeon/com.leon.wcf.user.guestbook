@@ -77,7 +77,7 @@ class UserGuestbookPage extends MultipleLinkPage {
 		$this->entryList->sqlConditions = 'entry.ownerID = '.$this->frame->getUserID();
 		$this->entryList->sqlOrderBy = 'entry.time DESC, entry.entryID DESC';
 		
-		// TODO: check data here, maybe separate function with event (entry)
+		// TODO: verify data and permissions like in UserGuestbookPageCommentXMLList
 		
 		if ($this->entry->entryID) $this->calculatePageNo();
 		
