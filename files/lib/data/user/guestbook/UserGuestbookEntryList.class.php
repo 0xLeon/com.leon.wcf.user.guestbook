@@ -2,6 +2,7 @@
 // wcf imports
 require_once(WCF_DIR.'lib/data/DatabaseObjectList.class.php');
 require_once(WCF_DIR.'lib/data/user/guestbook/UserGuestbookEntry.class.php');
+require_once(WCF_DIR.'lib/data/user/UserProfileList.class.php');
 
 /**
  * Represents a list of user guestbook entries.
@@ -66,45 +67,16 @@ class UserGuestbookEntryList extends DatabaseObjectList {
 			return array();
 		}
 		
-		$users = array();
-		
-		$sql = "SELECT		session.requestURI,
-					session.requestMethod,
-					session.ipAddress,
-					session.userAgent,
-					rank.*,
-					avatar.*,
-					GROUP_CONCAT(DISTINCT groups.groupID ORDER BY groups.groupID ASC SEPARATOR ',') AS groupIDs,
-					GROUP_CONCAT(DISTINCT languages.languageID ORDER BY languages.languageID ASC SEPARATOR ',') AS languageIDs,
-					user_option.*,
-					user.*
-			FROM		wcf".WCF_N."_user user
-			LEFT JOIN	wcf".WCF_N."_avatar avatar
-			ON		(avatar.avatarID = user.avatarID)
-			LEFT JOIN	wcf".WCF_N."_session session
-			ON		(session.userID = user.userID
-					AND session.packageID = ".PACKAGE_ID."
-					AND session.lastActivityTime > ".(TIME_NOW - USER_ONLINE_TIMEOUT).")
-			LEFT JOIN	wcf".WCF_N."_user_rank rank
-			ON		(rank.rankID = user.rankID)
-			LEFT JOIN	wcf".WCF_N."_user_to_groups groups
-			ON		(groups.userID = user.userID)
-			LEFT JOIN	wcf".WCF_N."_user_to_languages languages
-			ON		(languages.userID = user.userID)
-			LEFT JOIN	wcf".WCF_N."_user_option_value user_option
-			ON		(user_option.userID = user.userID)
-			WHERE		user.userID IN (0,".implode(',', $this->getOwnerIDs()).")
-			GROUP BY	user.userID";
-		$result = WCF::getDB()->sendQuery($sql);
-		while ($row = WCF::getDB()->fetchArray($result)) {
-			$users[$row['userID']] = new UserProfile(null, $row);
-		}
+		$userList = new UserProfileList();
+		$userList->sqlConditions .= " user.userID IN (0,".implode(',', $this->getOwnerIDs()).") ";
+		$userList->readObjects();
+		$users = $userList->getObjects();
 		
 		foreach ($this->entries as $entry) {
 			$entry->setOwner($users[$entry->ownerID]);
 		}
 		
-		unset($users);
+		unset($users, $userList);
 	}
 	
 	public function readAuthors() {
@@ -112,45 +84,16 @@ class UserGuestbookEntryList extends DatabaseObjectList {
 			return array();
 		}
 		
-		$users = array();
-		
-		$sql = "SELECT		session.requestURI,
-					session.requestMethod,
-					session.ipAddress,
-					session.userAgent,
-					rank.*,
-					avatar.*,
-					GROUP_CONCAT(DISTINCT groups.groupID ORDER BY groups.groupID ASC SEPARATOR ',') AS groupIDs,
-					GROUP_CONCAT(DISTINCT languages.languageID ORDER BY languages.languageID ASC SEPARATOR ',') AS languageIDs,
-					user_option.*,
-					user.*
-			FROM		wcf".WCF_N."_user user
-			LEFT JOIN	wcf".WCF_N."_avatar avatar
-			ON		(avatar.avatarID = user.avatarID)
-			LEFT JOIN	wcf".WCF_N."_session session
-			ON		(session.userID = user.userID
-					AND session.packageID = ".PACKAGE_ID."
-					AND session.lastActivityTime > ".(TIME_NOW - USER_ONLINE_TIMEOUT).")
-			LEFT JOIN	wcf".WCF_N."_user_rank rank
-			ON		(rank.rankID = user.rankID)
-			LEFT JOIN	wcf".WCF_N."_user_to_groups groups
-			ON		(groups.userID = user.userID)
-			LEFT JOIN	wcf".WCF_N."_user_to_languages languages
-			ON		(languages.userID = user.userID)
-			LEFT JOIN	wcf".WCF_N."_user_option_value user_option
-			ON		(user_option.userID = user.userID)
-			WHERE		user.userID IN (0,".implode(',', $this->getAuthorIDs()).")
-			GROUP BY	user.userID";
-		$result = WCF::getDB()->sendQuery($sql);
-		while ($row = WCF::getDB()->fetchArray($result)) {
-			$users[$row['userID']] = new UserProfile(null, $row);
-		}
+		$userList = new UserProfileList();
+		$userList->sqlConditions .= " user.userID IN (0,".implode(',', $this->getAuthorIDs()).") ";
+		$userList->readObjects();
+		$users = $userList->getObjects();
 		
 		foreach ($this->entries as $entry) {
-			$entry->setAuthor($users[$entry->userID]);
+			$entry->setAuthor($users[$entry->ownerID]);
 		}
 		
-		unset($users);
+		unset($users, $userList);
 	}
 	
 	/**
