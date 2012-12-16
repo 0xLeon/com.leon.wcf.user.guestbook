@@ -42,7 +42,18 @@
 				<div class="contentHeader">
 					{pages print=true assign=pagesLinks link="index.php?page=UserGuestbook&userID=$userID&pageNo=%d"|concat:SID_ARG_2ND_NOT_ENCODED}
 					
-					{* large buttons *}
+					{capture assign=largeButtons}
+						{if $userPermissions.canWriteEntry || $additionalLargeButtons|isset}
+							<div class="largeButtons">
+								<ul>
+									{if $userPermissions.canWriteEntry}<li><a href="index.php?form=UserGuestbookEntryAdd&amp;userID={$userID}{@SID_ARG_2ND}" title="{lang}wcf.user.guestbook.form.entry.action.add{/lang}"><img src="{icon}userGuestbookEntryAddM.png{/icon}" alt="" /> <span>{lang}wcf.user.guestbook.form.entry.action.add{/lang}</span></a></li>{/if}
+									{if $additionalLargeButtons|isset}{@$additionalLargeButtons}{/if}
+								</ul>
+							</div>
+						{/if}
+					{/capture}
+					
+					{@$largeButtons}
 				</div>
 				
 				{if $entries|count > 0}
@@ -50,31 +61,41 @@
 						{* <pre id="entry{$entry->entryID}" style="border: 1px solid #000; padding: 5px;">{@$entry|print_r:true}</pre> *}
 						
 						<a id="guestbookEntry{$entry->entryID}"></a>
-						<div class="message">
-							<div class="userAvatar" style="float: left;">
-								{if $entry->getAuthor()->getAvatar()}
-									{assign var=tmp value=$entry->getAuthor()->getAvatar()->setMaxSize(50, 50)}
+						<div class="message border" style="position: relative; display: block;">
+							<div class="messageInner container-1">
+								<div class="guestbookEntryAvatar" style="float: left; height: 100%; margin: 0px; padding: 0px;">
+									<div class="userAvatar" style="margin: 7px 13px; padding: 0px; float: left;">
+										{if $entry->getAuthor()->getAvatar()}
+											{assign var=tmp value=$entry->getAuthor()->getAvatar()->setMaxSize(50, 50)}
+											
+											{if $entry->getAuthor()->userID}<a href="{* profile link *}" title="{lang username=$entry->username}wcf.user.viewProfile{/lang}" style="display: block;">{/if}{@$entry->getAuthor()->getAvatar()}{if $entry->getAuthor()->userID}</a>{/if}
+										{else}
+											{if $entry->getAuthor()->userID}<a href="{* profile link *}" title="{lang username=$entry->username}wcf.user.viewProfile{/lang}" style="display: block;">{/if}<img src="{@RELATIVE_WCF_DIR}images/avatars/avatar-default.png" alt="" style="width: 50px; height: 50px;" />{if $entry->getAuthor()->userID}</a>{/if}
+										{/if}
+									</div>
+								</div>
+								
+								{* TODO: box doesn't use complete height, DOM Inspector shows error I think... *}
+								<div class="guestbookEntryBody" style="border-left: 1px dotted; padding: 0px 15px; margin-left: 76px;">
+									<div class="guestbookEntryCredits">
+										<p class="username">
+											{if $entry->getAuthor()->userID}<a href="{* profile link *}" title="{lang username=$entry->username}wcf.user.viewProfile{/lang}">{/if}{$entry->username}{if $entry->getAuthor()->userID}</a>{/if}
+										</p>
+										<p>{@$entry->time|time}</p>
+									</div>
 									
-									{if $entry->getAuthor()->userID}<a href="{* profile link *}" title="{lang username=$entry->username}wcf.user.viewProfile{/lang}">{/if}{@$entry->getAuthor()->getAvatar()}{if $entry->getAuthor()->userID}</a>{/if}
-								{else}
-									{if $entry->getAuthor()->userID}<a href="{* profile link *}" title="{lang username=$entry->username}wcf.user.viewProfile{/lang}">{/if}<img src="{@RELATIVE_WCF_DIR}images/avatars/avatar-default.png" alt="" style="width: 50px; height: 50px;" />{if $entry->getAuthor()->userID}</a>{/if}
-								{/if}
+									<div id="guestbookEntryMessage{$entry->entryID}" class="messageBody" style="border-top: 1px dotted; margin-top: 4px; padding-top: 4px;">
+										<p>{$entry->message}</p>
+									</div>
+								</div>
 							</div>
-							
-							<p class="username">
-								{if $entry->getAuthor()->userID}<a href="{* profile link *}" title="{lang username=$entry->username}wcf.user.viewProfile{/lang}">{/if}{$entry->username}{if $entry->getAuthor()->userID}</a>{/if}
-							</p>
-							
-							<p id="guestbookEntryMessage{$entry->entryID}" class="messageBody" style="margin-left: 120px;">
-								{$entry->message}
-							</p>
 						</div>
 					{/foreach}
 				
 					<div class="contentFooter">
 						{@$pagesLinks}
 						
-						{* large buttons *}
+						{@$largeButtons}
 					</div>
 				{else}
 					{if $userPermissions.isOwner}
