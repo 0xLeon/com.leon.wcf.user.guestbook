@@ -61,7 +61,8 @@ class UserGuestbookEntry extends Message {
 	public function __construct($entryID, $row = null) {
 		if ($entryID !== null) {
 			$sql = "SELECT		entry.*,
-						COUNT(comment.commentID) AS commentCount
+						COUNT(comment.commentID) AS commentCount,
+						GROUP_CONCAT(comment.commentID ORDER BY comment.commentID ASC SEPARATOR ',') AS commentIDs
 				FROM		wcf".WCF_N."_user_guestbook_entry entry
 				LEFT JOIN	wcf".WCF_N."_user_guestbook_comment comment
 				ON		(entry.entryID = comment.entryID)
@@ -81,6 +82,7 @@ class UserGuestbookEntry extends Message {
 		parent::handleData($row);
 		$this->messageID = $this->entryID;
 		$this->commentList->sqlConditions .= 'comment.entryID = '.$this->entryID;
+		$this->data['commentIDs'] = explode(',', $this->commentIDs);
 	}
 	
 	/**

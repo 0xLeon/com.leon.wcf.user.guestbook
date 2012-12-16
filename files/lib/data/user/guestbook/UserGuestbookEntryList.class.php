@@ -31,6 +31,7 @@ class UserGuestbookEntryList extends DatabaseObjectList {
 	
 	protected $ownerIDs = null;
 	protected $authorIDs = null;
+	protected $commentIDs = null;
 	
 	/**
 	 * @see DatabaseObjectList::countObjects()
@@ -51,7 +52,8 @@ class UserGuestbookEntryList extends DatabaseObjectList {
 	public function readObjects() {
 		$sql = "SELECT		".(!empty($this->sqlSelects) ? $this->sqlSelects.',' : '')."
 					entry.*,
-					COUNT(comment.commentID) AS commentCount
+					COUNT(comment.commentID) AS commentCount,
+					GROUP_CONCAT(comment.commentID ORDER BY comment.commentID ASC SEPARATOR ',') AS commentIDs
 			FROM		wcf".WCF_N."_user_guestbook_entry entry
 			LEFT JOIN	wcf".WCF_N."_user_guestbook_comment comment
 			ON		(entry.entryID = comment.entryID)
@@ -100,6 +102,32 @@ class UserGuestbookEntryList extends DatabaseObjectList {
 		unset($users, $userList);
 	}
 	
+	public function readComments() {
+		if (!count($this->entries)) {
+			return array();
+		}
+		
+		$commentList = new UserGuestbookCommentList();
+		$commentList->sqlConditions .= " comment.commentID IN (0,".implode(',', $this->getCommentIDs()).") ";
+		$commentList->readObjects();
+		$commentsUnorderd = $commentList->getObjects();
+		$comments = array();
+		
+		foreach ($commentsUnorderd as $comment) {
+			if (!isset($comments[$comment->entryID])) {
+				$comments[$comment->entryID] = array();
+			}
+			
+			$comments[$comment->entryID][] = $comment;
+		}
+		
+		foreach ($comments as $entryID => $entryComments) {
+			$this->entries[$entryID]->setComments($entryComments);
+		}
+		
+		unset($comments, $commentsUnordered, $commentList);
+	}
+	
 	/**
 	 * @see DatabaseObjectList::getObjects()
 	 */
@@ -141,5 +169,24 @@ class UserGuestbookEntryList extends DatabaseObjectList {
 		}
 		
 		return $this->authorIDs;
+	}
+	
+	protected function getCommentIDs() {
+		if (!count($this->entries)) {
+			$this->commentIDs = array();
+			
+			return $this->commentIDs;
+		}
+		if ($this->commentIDs === null) {
+			$this->commentIDs = array();
+			
+			foreach ($this->entries as $entry) {
+				$this->commentIDs = array_merge($this->commentIDs, $entry->commentIDs);
+			}
+			
+			$this->commentIDs = array_unique($this->commentIDs);
+		}
+		
+		return $this->commentIDs;
 	}
 }
