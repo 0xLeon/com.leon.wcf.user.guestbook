@@ -122,7 +122,7 @@ class UserGuestbookEntryList extends DatabaseObjectList {
 		}
 		
 		foreach ($comments as $entryID => $entryComments) {
-			$this->entries[$entryID]->setComments($entryComments);
+			$this->entries[$entryID]->getCommentList()->comments = $entryComments;
 		}
 		
 		unset($comments, $commentsUnordered, $commentList);

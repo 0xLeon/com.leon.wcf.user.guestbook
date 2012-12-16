@@ -105,7 +105,7 @@ class UserGuestbookEntry extends Message {
 	 * @return	UserGuestbookCommentList
 	 */
 	public function getCommentList() {
-		return $this->commentList();
+		return $this->commentList;
 	}
 	
 	/**
@@ -114,26 +114,11 @@ class UserGuestbookEntry extends Message {
 	 * @return	array<UserGuestbookComment>
 	 */
 	public function getComments() {
-		if ($this->comments === null) {
-			if ($this->commentCount > 0) {
-				$this->getCommentList()->readObjects();
-				$this->comments = $this->getCommentList()->getObjects();
-			}
-			else {
-				$this->comments = array();
-			}
+		if (($this->commentCount > 0) && !count($this->getCommentList()->getObjects())) {
+			$this->getCommentList()->readObjects();
 		}
 		
-		return $this->comments;
-	}
-	
-	/**
-	 * Sets the list of guestbook comments for this guestbook entry.
-	 * 
-	 * @param	array<UserGuestbookComment>	$comments
-	 */
-	public function setComments($comments) {
-		$this->comments = $comments;
+		return $this->getCommentList()->getObjects();
 	}
 	
 	/**
