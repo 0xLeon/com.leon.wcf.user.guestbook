@@ -7,12 +7,19 @@
 					<author>
 						<userID>{@$comment->getAuthor()->userID}</userID>
 						<username><![CDATA[{@$comment->username}]]></username>
-						{if $comment->getAuthor()->getAvatar()}
-							<avatar><![CDATA[{@$comment->getAuthor()->getAvatar()->getURL()}]]></avatar>
-						{else}
-							<avatar><![CDATA[{@RELATIVE_WCF_DIR}images/avatars/avatar-default.png]]></avatar>
-						{/if}
 						<ip><![CDATA[{@$comment->ipAddress}]]></ip>
+						<avatar>
+							{if $comment->getAuthor()->getAvatar()}
+								{assign var=tmp value=$entry->getAuthor()->getAvatar()->setMaxSize(50, 50)}
+								<path><![CDATA[{@$comment->getAuthor()->getAvatar()->getURL()}]]></path>
+								<width>{@$entry->getAuthor->getAvatar()->getWidth()}</width>
+								<height>{@$entry->getAuthor->getAvatar()->getHeight()}</height>
+							{else}
+								<path><![CDATA[{@RELATIVE_WCF_DIR}images/avatars/avatar-default.png]]></path>
+								<width>50</width>
+								<height>50</height>
+							{/if}
+						</avatar>
 					</author>
 					<time>
 						<raw>{@$comment->time}</raw>
