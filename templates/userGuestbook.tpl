@@ -57,47 +57,12 @@
 				</div>
 				
 				{if $entries|count > 0}
-					{foreach from=$entries item=entry}
-						<a id="guestbookEntry{$entry->entryID}"></a>
-						<div class="message border" style="position: relative; display: block;">
-							<div class="messageInner">
-								<div class="container-1">
-									<div class="guestbookEntryAvatar" style="float: left; height: 100%; margin: 0px; padding: 0px;">
-										<div class="userAvatar" style="margin: 7px 13px; padding: 0px; float: left;">
-											{if $entry->getAuthor()->getAvatar()}
-												{assign var=tmp value=$entry->getAuthor()->getAvatar()->setMaxSize(50, 50)}
-												
-												{if $entry->getAuthor()->userID}<a href="{* profile link *}" title="{lang username=$entry->username}wcf.user.viewProfile{/lang}" style="display: block;">{/if}{@$entry->getAuthor()->getAvatar()}{if $entry->getAuthor()->userID}</a>{/if}
-											{else}
-												{if $entry->getAuthor()->userID}<a href="{* profile link *}" title="{lang username=$entry->username}wcf.user.viewProfile{/lang}" style="display: block;">{/if}<img src="{@RELATIVE_WCF_DIR}images/avatars/avatar-default.png" alt="" style="width: 50px; height: 50px;" />{if $entry->getAuthor()->userID}</a>{/if}
-											{/if}
-										</div>
-									</div>
-									
-									{* TODO: box doesn't use complete height, DOM Inspector shows error I think... *}
-									<div class="guestbookEntryBody" style="border-left: 1px dotted; padding: 0px 15px; margin-left: 76px;">
-										<div class="guestbookEntryCredits">
-											<p class="username">
-												{if $entry->getAuthor()->userID}<a href="{* profile link *}" title="{lang username=$entry->username}wcf.user.viewProfile{/lang}">{/if}{$entry->username}{if $entry->getAuthor()->userID}</a>{/if}
-											</p>
-											<p>{@$entry->time|time}</p>
-										</div>
-										
-										<div id="guestbookEntryMessage{$entry->entryID}" class="messageBody" style="border-top: 1px dotted; margin-top: 4px; padding-top: 2px;">
-											<p>{$entry->message}</p>
-										</div>
-									</div>
-								</div>
-								
-								<div class="container-2">
-									<div class="guestbookEntryComments" style="border-top: 1px dotted;">
-										<a id="guestbookEntryCommentLink{$entry->entryID}" title="{lang}wcf.user.guestbook.comment.load{/lang}" style="display: block; padding: 2px 15px 2px 13px;">{lang commentCount=$entry->commentCount}wcf.user.guestbook.comment.comments{/lang}</a>
-									</div>
-								</div>
-							</div>
-						</div>
-					{/foreach}
-				
+					<div class="guestbookEntries">
+						{foreach from=$entries item=entry}
+							{include file='userGuestbookEntryBox' entry=$entry}
+						{/foreach}
+					</div>
+					
 					<div class="contentFooter">
 						{@$pagesLinks}
 						
