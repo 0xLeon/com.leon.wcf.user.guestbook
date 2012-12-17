@@ -37,7 +37,7 @@
 	<div class="border {if $this|method_exists:'getUserProfileMenu' && $this->getUserProfileMenu()->getMenuItems('')|count > 1}tabMenuContent{else}content{/if}">
 		<div class="container-1">
 			<div class="contentBox">
-				<h3 class="subheadline">{lang}wcf.user.guestbook{/lang}</h3>
+				<h3 class="subHeadline">{lang}wcf.user.guestbook{/lang}</h3>
 				
 				<div class="contentHeader">
 					{pages print=true assign=pagesLinks link="index.php?page=UserGuestbook&userID=$userID&pageNo=%d"|concat:SID_ARG_2ND_NOT_ENCODED}
