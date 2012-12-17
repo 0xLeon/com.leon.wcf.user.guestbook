@@ -71,13 +71,16 @@ class UserGuestbookPage extends MultipleLinkPage {
 	 * @see	Page::readData()
 	 */
 	public function readData() {
-		$this->entry = new UserGuestbookEntry($this->entryID);
+		$this->entry = new UserGuestbookEntry((($this->entryID) ? $this->entryID : null), array());
 		$this->entryList = new UserGuestbookEntryList();
+		$this->userPermissions = UserGuestbookUtil::getUserPermissions($this->frame->getUser());
+		$this->modPermissions = UserGuestbookUtil::getModeratorPermissions($this->frame->getUser());
 		
 		$this->entryList->sqlConditions = 'entry.ownerID = '.$this->frame->getUserID();
 		$this->entryList->sqlOrderBy = 'entry.time DESC, entry.entryID DESC';
 		
-		// TODO: verify data and permissions like in UserGuestbookPageCommentXMLList
+		$this->verifyData();
+		$this->verifyPermissions();
 		
 		if ($this->entry->entryID) $this->calculatePageNo();
 		
@@ -88,9 +91,6 @@ class UserGuestbookPage extends MultipleLinkPage {
 		$this->entryList->readObjects();
 		$this->entryList->readOwners();
 		$this->entryList->readAuthors();
-		
-		$this->userPermissions = UserGuestbookUtil::getUserPermissions($this->frame->getUser());
-		$this->modPermissions = UserGuestbookUtil::getModeratorPermissions($this->frame->getUser());
 	}
 	
 	/**
@@ -120,14 +120,34 @@ class UserGuestbookPage extends MultipleLinkPage {
 	 * @see Page::show()
 	 */
 	public function show() {
-		$this->readData();
-		
 		UserProfileMenu::getInstance()->setActiveMenuItem('wcf.user.profile.menu.link.guestbook');
 		
 		if (!MODULE_USER_GUESTBOOK) {
 			throw new IllegalLinkException();
 		}
 		
+		parent::show();
+	}
+	
+	/**
+	 * Calculates the page of the entry if there's an entryID given.
+	 */
+	protected function calculatePageNo() {
+		$sql = "SELECT	COUNT(*) AS count
+			FROM	wcf".WCF_N."_user_guestbook_entry entry
+			WHERE	".$this->entryList->sqlConditions."
+				AND entry.time >= ".$this->entry->time;
+		$row = WCF::getDB()->getFirstRow($sql);
+		$this->pageNo = intval(ceil($row['count'] / $this->itemsPerPage));
+	}
+	
+	public function verifyData() {
+		if ($this->entryID && !$this->entry->entryID) {
+			throw new IllegalLinkException();
+		}
+	}
+	
+	public function verifyPermissions() {
 		try {
 			if (!$this->userPermissions['canUseGuestbook']) {
 				throw new NamedUserException(WCF::getLanguage()->get('wcf.user.profile.error.guestbook.permissionDenied'));
@@ -147,25 +167,5 @@ class UserGuestbookPage extends MultipleLinkPage {
 			WCF::getTPL()->display('userProfileAccessDenied');
 			exit;
 		}
-		
-		$this->assignVariables();
-		
-		EventHandler::fireAction($this, 'show');
-		
-		if (!empty($this->templateName)) {
-			WCF::getTPL()->display($this->templateName);
-		}
-	}
-	
-	/**
-	 * Calculates the page of the entry if there's an entryID given.
-	 */
-	protected function calculatePageNo() {
-		$sql = "SELECT	COUNT(*) AS count
-			FROM	wcf".WCF_N."_user_guestbook_entry entry
-			WHERE	".$this->entryList->sqlConditions."
-				AND entry.time >= ".$this->entry->time;
-		$row = WCF::getDB()->getFirstRow($sql);
-		$this->pageNo = intval(ceil($row['count'] / $this->itemsPerPage));
 	}
 }
