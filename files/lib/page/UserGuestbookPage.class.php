@@ -110,9 +110,20 @@ class UserGuestbookPage extends MultipleLinkPage {
 		
 		$this->frame->assignVariables();
 		WCF::getTPL()->assign(array(
+			'commentID' => '#{commentID}',
+			'authorID' => '#{authorID}',
+			'authorName' => '#{authorname}',
+			'time' => '#{time}',
+			'message' => '#{message}',
+			'avatarPath' => '#{avatarPath}',
+			'avatarWidth' => '#{avatarWidth}',
+			'avatarHeight' => '#{avatarHeight}'
+		));
+		WCF::getTPL()->assign(array(
 			'userPermissions' => $this->userPermissions,
 			'modPermissions' => $this->modPermissions,
-			'entries' => $this->entryList->getObjects()
+			'entries' => $this->entryList->getObjects(),
+			'jsTemplateComment' => StringUtil::replace("\n", '', WCF::getTPL()->fetch('userGuestbookCommentBox'))
 		));
 	}
 	
