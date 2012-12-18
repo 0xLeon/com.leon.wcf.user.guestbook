@@ -10,10 +10,10 @@
 						<ip><![CDATA[{@$comment->ipAddress}]]></ip>
 						<avatar>
 							{if $comment->getAuthor()->getAvatar()}
-								{assign var=tmp value=$entry->getAuthor()->getAvatar()->setMaxSize(50, 50)}
+								{assign var=tmp value=$comment->getAuthor()->getAvatar()->setMaxSize(50, 50)}
 								<path><![CDATA[{@$comment->getAuthor()->getAvatar()->getURL()}]]></path>
-								<width>{@$entry->getAuthor->getAvatar()->getWidth()}</width>
-								<height>{@$entry->getAuthor->getAvatar()->getHeight()}</height>
+								<width>{@$comment->getAuthor()->getAvatar()->getWidth()}</width>
+								<height>{@$comment->getAuthor()->getAvatar()->getHeight()}</height>
 							{else}
 								<path><![CDATA[{@RELATIVE_WCF_DIR}images/avatars/avatar-default.png]]></path>
 								<width>50</width>
