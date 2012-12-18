@@ -23,7 +23,7 @@
 	<script type="text/javascript" src="{@RELATIVE_WCF_DIR}js/UserGuestbook.class.js"></script>
 	<script type="text/javascript">
 		//<![CDATA[
-		var guestbookCommentTemplate = '{@$jsTemplateComment|encodeJS}';
+		var guestbookCommentTemplate = new Template('{@$jsTemplateComment|encodeJS}');
 		//]]>
 	</script>
 </head>
