@@ -112,7 +112,7 @@ class UserGuestbookPage extends MultipleLinkPage {
 		WCF::getTPL()->assign(array(
 			'commentID' => '#{commentID}',
 			'authorID' => '#{authorID}',
-			'authorName' => '#{authorname}',
+			'authorName' => '#{authorName}',
 			'time' => '#{time}',
 			'message' => '#{message}',
 			'avatarPath' => '#{avatarPath}',
