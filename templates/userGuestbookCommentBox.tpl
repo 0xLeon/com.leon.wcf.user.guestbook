@@ -32,7 +32,7 @@
 				<p class="username light smallFont">
 					{if $authorID}<a href="{* profile link *}" title="{lang username=$authorName}wcf.user.viewProfile{/lang}">{/if}{$authorName}{if $authorID}</a>{/if}
 				</p>
-				<p class="time light smallFont>{@$time}</p>
+				<p class="time light smallFont">{@$time}</p>
 			</div>
 			
 			<div id="guestbookCommentMessage{$commentID}" class="messageBody" style="border-top: 1px dotted; margin-top: 4px; padding-top: 2px;">
