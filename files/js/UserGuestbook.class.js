@@ -45,10 +45,42 @@ var UserGuestbook = (function() {
 			}
 		},
 		
+		toggleComments: function() {
+			
+		},
+		
 		displayComments: function(response) {
-			alert(response.status + ': should display comments')
+			var xml = response.responseXML;
+			var htmlString = '';
+			
+			if (parseInt(xml.querySelector('comments').getAttribute('count')) > 0) {
+				var comments = $A(xml.querySelectorAll('comments > comment'));
+				
+				comments.each(function(item) {
+					var tplData = {
+						commentID:	parseInt(item.getAttribute('id')),
+						authorID:	parseInt(item.querySelector('author > userID').firstChild.NodeValue),
+						authorName:	item.querySelector('author > username').firstChild.nodeValue,
+						time:		item.querySelector('time > formatted').firstChild.nodeValue,
+						message:	item.querySelector('message').firstChild.nodeValue,
+						avatarPath:	item.querySelector('author > avatar > path').firstChild.nodeValue,
+						avatarWidth:	parseInt(item.querySelector('author > avatar > width').firstChild.nodeValue),
+						avatarHeight:	parseInt(item.querySelector('author > avatar > height').firstChild.nodeValue)
+					};
+					
+					htmlString += guestbookCommentTemplate.evaluate(tplData) + "\n";
+				});
+			}
+			
+			$('guestbookComments' + this.entryID).innerHTML = htmlString;
+			
+			this.showCommentForm();
 			
 			this.commentsLoaded = true;
+		},
+		
+		showCommentForm: function() {
+			
 		},
 		
 		displayCommentLoadError: function(response) {
