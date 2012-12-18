@@ -42,6 +42,8 @@
 				</comment>
 			{/foreach}
 		</comments>
+	{else}
+		<comments count="0" />
 	{/if}
 	
 	{* TODO: entries? *}
