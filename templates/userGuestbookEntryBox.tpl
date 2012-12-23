@@ -22,7 +22,7 @@
 	<div class="messageInner">
 		<a id="guestbookEntry{$entryID}"></a>
 		
-		<div class="container-1">
+		<div class="container-2">
 			<div class="guestbookEntryAvatar" style="float: left; height: 100%; margin: 0px; padding: 0px;">
 				<div class="userAvatar" style="margin: 7px 13px; padding: 0px; float: left;">
 					{if $authorID}<a href="{* profile link *}" title="{lang username=$authorName}wcf.user.viewProfile{/lang}" style="display: block;">{/if}<img src="{@$avatarPath}" alt="" style="width: {@$avatarWidth}px; height: {@$avatarHeight}px;" />{if $authorID}</a>{/if}
@@ -44,7 +44,7 @@
 			</div>
 		</div>
 		
-		<div class="container-2" style="clear: both;">
+		<div class="container-3" style="clear: both;">
 			<div class="guestbookEntryComments" style="border-top: 1px dotted;">
 				{*<a id="guestbookEntryCommentLink{$entryID}" title="{lang}wcf.user.guestbook.comment.load{/lang}" style="display: block; padding: 2px 15px 2px 13px;">{lang commentCount=$commentCount}wcf.user.guestbook.comment.comments{/lang}</a>*}
 				<a id="guestbookEntryCommentLink{$entryID}" title="{lang}wcf.user.guestbook.comment.load{/lang}" style="display: block; padding: 2px 15px 2px 13px;">Kommentare ({$commentCount})</a>

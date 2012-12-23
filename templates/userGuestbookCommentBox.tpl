@@ -17,8 +17,8 @@
 	{/if}
 {/if}
 
-<div id="guestbookCommentContainer{$commentID}" class="message guestbookComment" style="clear: both; position: relative; display: block;">
-	<div class="messageInner">
+<div id="guestbookCommentContainer{$commentID}" class="guestbookComment" style="clear: both; position: relative; display: block; border-top: 1px dotted;">
+	<div class="messageInner guestbookCommentInner">
 		<a id="guestbookComment{$commentID}"></a>
 		
 		<div class="guestbookCommentAvatar" style="float: left; height: 100%; margin: 0px; padding: 0px;">
@@ -35,7 +35,7 @@
 				<p class="time light smallFont">{@$time}</p>
 			</div>
 			
-			<div id="guestbookCommentMessage{$commentID}" class="messageBody" style="border-top: 1px dotted; margin-top: 4px; padding-top: 2px;">
+			<div id="guestbookCommentMessage{$commentID}" class="guestbookCommentBody" style="border-top: 1px dotted; margin-top: 4px; padding-top: 2px;">
 				<p>{@$message}</p>
 			</div>
 		</div>
