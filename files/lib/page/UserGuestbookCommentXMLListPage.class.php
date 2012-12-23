@@ -69,6 +69,7 @@ class UserGuestbookCommentXMLListPage extends AbstractPage {
 		$this->verifyData();
 		$this->verifyPermissions();
 		
+		if (!$this->modPermissions['canReadDeletedEntry']) $this->entry->getCommentList()->sqlConditions .= ', comment.isDeleted = 0';
 		$this->entry->getCommentList()->sqlOrderBy .= "comment.time ASC, comment.commentID ASC";
 		$this->comments = $this->entry->getComments();
 		
@@ -121,6 +122,10 @@ class UserGuestbookCommentXMLListPage extends AbstractPage {
 		
 		if (!$this->entry->getOwner()->getPermission('user.guestbook.canUseGuestbook')) {
 			throw new IllegalLinkException();
+		}
+		
+		if ($this->entry->isDeleted && !$this->modPermissions['canReadDeletedEntry']) {
+			throw new PermissionDeniedException();
 		}
 	}
 } 

@@ -77,6 +77,7 @@ class UserGuestbookPage extends MultipleLinkPage {
 		$this->modPermissions = UserGuestbookUtil::getModeratorPermissions($this->frame->getUser());
 		
 		$this->entryList->sqlConditions = 'entry.ownerID = '.$this->frame->getUserID();
+		if (!$this->modPermissions['canReadDeletedEntry']) $this->entryList->sqlConditions = 'AND entry.isDeleted = 0';
 		$this->entryList->sqlOrderBy = 'entry.time DESC, entry.entryID DESC';
 		
 		$this->verifyData();
