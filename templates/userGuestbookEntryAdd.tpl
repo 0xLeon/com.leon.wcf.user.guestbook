@@ -37,16 +37,9 @@
 			<div class="container-1">
 				<h3 class="subHeadline">{lang}wcf.user.guestbook.form.entry.action.{@$action}{/lang}</h3>
 				
-				{if $preview|isset && !$preview|empty}
-					<div class="message content">
-						<div class="messageInner container-1">
-							<div class="messageHeader">
-								<h4>{lang}wcf.message.preview{/lang}</h4>
-							</div>
-							<div class="messageBody">
-								<div>{@$preview}</div>
-							</div>
-						</div>
+				{if $preview|isset && $preview}
+					<div class="messagePreview guestbookEntryPreview">
+						{include file='userGuestbookEntryBox'}
 					</div>
 				{/if}
 				
