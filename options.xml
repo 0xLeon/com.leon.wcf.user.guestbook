@@ -18,6 +18,11 @@
 				<optiontype>integer</optiontype>
 				<defaultvalue>20</defaultvalue>
 			</option>
+			<option name="user_guestbook_show_deleted_entry_note">
+				<categoryname>user.profile.guestbook</categoryname>
+				<optiontype>boolean</optiontype>
+				<defaultvalue>1</defaultvalue>
+			</option>
 		</options>
 	</import>
 </data>

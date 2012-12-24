@@ -50,6 +50,13 @@ class UserGuestbookCommentXMLListPage extends AbstractPage {
 	public $userPermissions = null;
 	
 	/**
+	 * Moderator permissions
+	 * 
+	 * @var	array<bool>
+	 */
+	public $modPermissions = null;
+	
+	/**
 	 * @see	Page::readParameters()
 	 */
 	public function readParameters() {
@@ -69,7 +76,7 @@ class UserGuestbookCommentXMLListPage extends AbstractPage {
 		$this->verifyData();
 		$this->verifyPermissions();
 		
-		if (!$this->modPermissions['canReadDeletedEntry']) $this->entry->getCommentList()->sqlConditions .= ', comment.isDeleted = 0';
+		if (!USER_GUESTBOOK_SHOW_DELETED_ENTRY_NOTE || !$this->modPermissions['canReadDeletedEntry']) $this->entry->getCommentList()->sqlConditions .= ', comment.isDeleted = 0';
 		$this->entry->getCommentList()->sqlOrderBy .= "comment.time ASC, comment.commentID ASC";
 		$this->comments = $this->entry->getComments();
 		
@@ -115,6 +122,7 @@ class UserGuestbookCommentXMLListPage extends AbstractPage {
 	 */
 	public function verifyPermissions() {
 		$this->userPermissions = UserGuestbookUtil::getUserPermissions($this->entry->getOwner());
+		$this->modPermissions = UserGuestbookUtil::getModeratorPermissions($this->entry->getOwner());
 		
 		if (!$this->userPermissions['canUseGuestbook'] || !$this->userPermissions['canViewGuestbook'] || !$this->entry->getOwner()->canViewProfile()) {
 			throw new PermissionDeniedException();

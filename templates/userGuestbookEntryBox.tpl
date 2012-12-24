@@ -6,6 +6,11 @@
 	{assign var=message value=$entry->message}
 	{assign var=commentCount value=$entry->commentCount}
 	
+	{assign var=isDeleted value=$entry->isDeleted}
+	{assign var=deletedByID value=$entry->deletedByID}
+	{assign var=deletedBy value=$entry->deletedBy}
+	{assign var=deletedReason value=$entry->deleteReason}
+	
 	{if $entry->getAuthor()->getAvatar()}
 		{assign var=tmp value=$entry->getAuthor()->getAvatar()->setMaxSize(50, 50)}
 		{assign var=avatarPath value=$entry->getAuthor()->getAvatar()->getURL()}
@@ -18,14 +23,15 @@
 	{/if}
 {/if}
 
-<div id="guestbookEntryContainer{$entryID}" class="message border guestbookEntry" style="clear: both; position: relative; display: block;">
+{if !$isDeleted || $modPermissions.canReadDeletedEntry}
+<div id="guestbookEntryContainer{$entryID}" class="message guestbookEntry{if $isDeleted} deleted{/if}" style="clear: both; position: relative;{if $isDeleted} display: none;{/if}">
 	<div class="messageInner">
-		<a id="guestbookEntry{$entryID}"></a>
+		{if !$isDeleted}<a id="guestbookEntry{$entryID}"></a>{/if}
 		
 		<div class="container-2">
 			<div class="guestbookEntryAvatar" style="float: left; height: 100%; margin: 0px; padding: 0px;">
 				<div class="userAvatar" style="margin: 7px 13px; padding: 0px; float: left;">
-					{if $authorID}<a href="{* profile link *}" title="{lang username=$authorName}wcf.user.viewProfile{/lang}" style="display: block;">{/if}<img src="{@$avatarPath}" alt="" style="width: {@$avatarWidth}px; height: {@$avatarHeight}px;" />{if $authorID}</a>{/if}
+					{if $authorID}<a href="index.php?page=User&amp;userID={$authorID}{@SID_ARG_2ND}" title="{lang username=$authorName}wcf.user.viewProfile{/lang}" style="display: block;">{/if}<img src="{@$avatarPath}" alt="" style="width: {@$avatarWidth}px; height: {@$avatarHeight}px;" />{if $authorID}</a>{/if}
 				</div>
 			</div>
 			
@@ -33,7 +39,7 @@
 			<div class="guestbookEntryBody" style="height: 100%; border-left: 1px dotted; padding: 0px 15px; margin-left: 76px;">
 				<div class="guestbookEntryCredits">
 					<p class="username light smallFont">
-						{if $authorID}<a href="{* profile link *}" title="{lang username=$authorName}wcf.user.viewProfile{/lang}">{/if}{$authorName}{if $authorID}</a>{/if}
+						{if $authorID}<a href="index.php?page=User&amp;userID={$authorID}{@SID_ARG_2ND}" title="{lang username=$authorName}wcf.user.viewProfile{/lang}">{/if}{$authorName}{if $authorID}</a>{/if}
 					</p>
 					<p class="time light smallFont">{@$time}</p>
 				</div>
@@ -59,3 +65,27 @@
 	UserGuestbook.pushEntry({@$entryID|intval});
 	//]]>
 </script>
+{/if}
+
+{if $isDeleted}
+	<div class="message messageMinimized" id="hiddenGuestbookEntryInfo{$entryID}">
+		<div class="messageInner">
+			<a id="guestbookEntry{$entryID}"></a>
+			
+			{* TODO: change icon, not a wcf icon *}
+			<img src="{icon}postTrashM.png{/icon}" alt="" />
+			
+			<p class="smallFont light">
+				{if $modPermissions.canReadDeletedEntry}
+					<a onclick="showContent('guestbookEntryContainer{@$entryID}', 'hiddenGuestbookEntryInfo{@$entryID}')" title="{lang}wcf.user.guestbook.entry.showEntry{/lang}">
+				{/if}
+				
+				<span>{lang}wcf.user.guestbook.entry.deletedEntry{/lang}</span>
+				
+				{if $modPermissions.canReadDeletedEntry}
+					</a>
+				{/if}
+			</p>
+		</div>
+	</div>
+{/if}
