@@ -148,6 +148,8 @@ class UserGuestbookEntryList extends DatabaseObjectList {
 			foreach ($this->entries as $entry) {
 				$this->ownerIDs[] = $entry->ownerID;
 			}
+			
+			$this->ownerIDs = array_unique($this->ownerIDs);
 		}
 		
 		return $this->ownerIDs;
@@ -166,6 +168,8 @@ class UserGuestbookEntryList extends DatabaseObjectList {
 			foreach ($this->entries as $entry) {
 				$this->authorIDs[] = $entry->userID;
 			}
+			
+			$this->authorIDs = array_unique($this->authorIDs);
 		}
 		
 		return $this->authorIDs;
